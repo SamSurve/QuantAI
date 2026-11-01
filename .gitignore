@@ -1,0 +1,97 @@
+
+# ==========================================
+# QuantAI Python Project
+# ==========================================
+
+# Environment files and secrets
+.env
+.env.*
+!.env.example
+*.env
+
+# Python virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Python packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+wheels/
+
+# Python test and coverage caches
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+
+# Python lint/type-check caches
+.ruff_cache/
+.mypy_cache/
+.pytype/
+
+# Downloaded standalone executables
+# Tailwind binaries must NEVER be committed.
+tools/
+
+# Node.js — forbidden project dependency
+node_modules/
+
+# Vercel local artifacts
+.vercel/
+
+# Runtime logs
+*.log
+logs/
+
+# Local databases (no database is part of the migration)
+*.sqlite
+*.sqlite3
+*.db
+
+# Secrets and private certificates
+secrets/
+credentials/
+*.pem
+*.key
+*.p12
+*.pfx
+*.p7b
+*.p7c
+*.jks
+
+# Temporary and editor files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# IDE settings
+.idea/
+.vscode/
+
+# OS-generated files
+Desktop.ini
+$RECYCLE.BIN/
+
+# Local profiling and debugging
+.prof
+.profraw
+.pyinstrument/
+
+# Generated documentation build output
+site/
+.sphinx-build/
