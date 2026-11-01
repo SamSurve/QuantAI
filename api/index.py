@@ -5,13 +5,18 @@ mounted AgentOS app therefore keeps its native ``/agents`` routes while the
 public same-origin path becomes ``/api/agents/...``.
 """
 
+from __future__ import annotations
+
 import logging
+from pathlib import Path
 from typing import Any
 from uuid import uuid4
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from agno.exceptions import ModelProviderError
 
@@ -22,7 +27,9 @@ from .research_errors import ResearchError
 from .research_orchestrator import AnalysisSynthesisService, ResearchOrchestrator
 from .research_protection import ResearchConcurrencyGuard, SlidingWindowRateLimiter
 from .research_schemas import ErrorCategory, ErrorResponse, ResearchRequest, ResearchResponse
+from .web.routes import prefers_html_over_json, register_web_routes, render_not_found
 
+STATIC_DIR = Path(__file__).resolve().parents[1] / "static"
 
 app = FastAPI(title="QuantAI Finance Agent API", docs_url="/api/docs", openapi_url="/api/openapi.json")
 LOGGER = logging.getLogger("quantai.api")
@@ -57,7 +64,7 @@ def _error_response(request: Request, error: ResearchError) -> JSONResponse:
 
 
 @app.middleware("http")
-async def request_context_and_body_limit(request: Request, call_next: Any) -> JSONResponse:
+async def request_context_and_body_limit(request: Request, call_next: Any) -> Response:
     request.state.request_id = request.headers.get("x-request-id") or str(uuid4())
     typed_research_path = request.url.path in {"/api/research", "/research"}
     agentos_run_path = request.method == "POST" and request.url.path in {
@@ -72,8 +79,6 @@ async def request_context_and_body_limit(request: Request, call_next: Any) -> JS
                 request,
                 ResearchError(ErrorCategory.VALIDATION_ERROR, detail="request body too large"),
             )
-        # Starlette caches this body for downstream JSON or multipart validation.
-        # This protects chunked requests that omit Content-Length.
         if len(await request.body()) > request_limit:
             return _error_response(
                 request,
@@ -85,8 +90,35 @@ async def request_context_and_body_limit(request: Request, call_next: Any) -> JS
             response = await call_next(request)
     else:
         response = await call_next(request)
+
+    # Browser 404 content negotiation for responses that return 404
+    if response.status_code == 404:
+        accept = request.headers.get("accept")
+        if prefers_html_over_json(accept) and not request.url.path.startswith("/api"):
+            html_resp = render_not_found(request)
+            html_resp.headers["X-Request-ID"] = request.state.request_id
+            return html_resp
+
     response.headers["X-Request-ID"] = request.state.request_id
     return response
+
+
+@app.exception_handler(StarletteHTTPException)
+async def http_exception_handler(request: Request, exc: StarletteHTTPException) -> Response:
+    if exc.status_code == 404:
+        accept = request.headers.get("accept")
+        if prefers_html_over_json(accept) and not request.url.path.startswith("/api"):
+            return render_not_found(request)
+        return JSONResponse(
+            status_code=404,
+            content={
+                "request_id": _request_id(request),
+                "category": ErrorCategory.ENTITY_NOT_FOUND.value,
+                "message": "Resource not found",
+                "retryable": False,
+            },
+        )
+    return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
 
 
 @app.exception_handler(ModelProviderError)
@@ -96,9 +128,7 @@ async def model_provider_error_handler(_request: Request, error: ModelProviderEr
         status_code=503,
         content={
             "status": "ERROR",
-            "detail": (
-                "AI analysis is temporarily unavailable. Please try again shortly."
-            ),
+            "detail": "AI analysis is temporarily unavailable. Please try again shortly.",
             "retryable": True,
         },
     )
@@ -149,11 +179,14 @@ def prefixed_health() -> dict[str, Any]:
     return health_payload()
 
 
-@app.get("/", include_in_schema=False)
 @app.get("/health", include_in_schema=False)
 def prefix_stripped_health() -> dict[str, Any]:
     """Support Vercel function adapters that strip the function's `/api` prefix."""
     return health_payload()
+
+
+# Register root content negotiation and web routes
+register_web_routes(app, health_payload)
 
 
 @app.post("/api/research", response_model=ResearchResponse, responses={
@@ -179,6 +212,10 @@ async def typed_research_prefix_stripped(request: Request, payload: ResearchRequ
     async with research_concurrency_guard.acquire():
         return await research_orchestrator.research(_request_id(request), payload)
 
+
+# Mount static assets directory
+if STATIC_DIR.exists():
+    app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 app.mount("/api", agentos_app)
 # Vercel's Python adapters normally preserve `/api`, but the fallback mount also
