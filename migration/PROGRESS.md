@@ -16,7 +16,7 @@ Schedule: 3 days / 6 batches / 30 parts
 - [x] PART 01 — Python-only foundation and source preservation
 - [x] PART 02 — Test infrastructure
 - [x] PART 03 — Pydantic contracts and response models
-- [ ] PART 04 — Formatting and data presenters
+- [x] PART 04 — Formatting and data presenters
 - [ ] PART 05 — FastAPI application and base HTML shell
 
 Batch status: NOT STARTED
