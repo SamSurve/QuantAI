@@ -54,6 +54,8 @@ def isolated_app(provider_env: dict[str, str]) -> Iterator[tuple[object, str]]:
             for module_name in _MODULES_WITH_PROVIDER_CONSTRUCTION:
                 sys.modules.pop(module_name, None)
             sys.modules.update(previous_modules)
+            if "api" in sys.modules and "api.index" in previous_modules:
+                setattr(sys.modules["api"], "index", previous_modules["api.index"])
 
 
 def no_provider_environment() -> dict[str, str]:
