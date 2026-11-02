@@ -28,7 +28,7 @@ Stop after Part 05.
 - [x] PART 06 — Visual system, Tailwind and assets
 - [x] PART 07 — Persistent theme system
 - [x] PART 08 — Company search and shortcuts
-- [ ] PART 09 — Research orchestration and error guidance
+- [x] PART 09 — Research orchestration and error guidance
 - [ ] PART 10 — Identity dossier and research states
 
 Batch status: NOT STARTED

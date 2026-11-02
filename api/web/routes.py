@@ -83,3 +83,14 @@ def register_web_routes(app: FastAPI, health_provider: Callable[[], dict[str, An
     @app.get("/404", include_in_schema=False)
     async def explicit_404_endpoint(request: Request) -> HTMLResponse:
         return render_not_found(request)
+
+    @app.get("/research", include_in_schema=False)
+    async def web_research_endpoint(request: Request, query: str = "") -> Response:
+        accept = request.headers.get("accept")
+        if prefers_html_over_json(accept):
+            return templates.TemplateResponse(
+                request=request,
+                name="pages/home.html",
+                context={"query": query},
+            )
+        return JSONResponse(status_code=400, content={"message": "Use POST /api/research for JSON API"})
