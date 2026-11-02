@@ -26,7 +26,7 @@ Stop after Part 05.
 ## BATCH 02 — Parts 06–10
 
 - [x] PART 06 — Visual system, Tailwind and assets
-- [ ] PART 07 — Persistent theme system
+- [x] PART 07 — Persistent theme system
 - [ ] PART 08 — Company search and shortcuts
 - [ ] PART 09 — Research orchestration and error guidance
 - [ ] PART 10 — Identity dossier and research states

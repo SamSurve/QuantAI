@@ -38,11 +38,7 @@
           <div style="display:flex;align-items:center;gap:14px;font-size:13px" class="muted">
             <span style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--up)"></span>Ready</span>
             {% block header_theme %}
-            <div class="segs" role="group" aria-label="Theme">
-              <button type="button" class="seg" data-theme-btn="light">Light</button>
-              <button type="button" class="seg" data-theme-btn="dark">Dark</button>
-              <button type="button" class="seg on" data-theme-btn="system">System</button>
-            </div>
+            {% include "partials/theme_toggle.html" %}
             {% endblock %}
           </div>
         </div>
@@ -54,6 +50,7 @@
         Ask the research desk
       </button>
     </div>
+    <script src="/static/js/theme.js"></script>
     {% block scripts %}{% endblock %}
   </body>
 </html>
