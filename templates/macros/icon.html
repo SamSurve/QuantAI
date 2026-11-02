@@ -1,0 +1,27 @@
+{# Reusable SVG Icon Macro #}
+{% macro render(name, size=20, class="") %}
+{% if name == "search" %}
+<svg width="{{ size }}" height="{{ size }}" viewBox="0 0 20 20" class="{{ class }}" aria-hidden="true">
+  <circle cx="8.5" cy="8.5" r="6" fill="none" style="stroke:var(--muted)" stroke-width="2"></circle>
+  <path d="M13 13l5 5" style="stroke:var(--muted)" stroke-width="2" stroke-linecap="round"></path>
+</svg>
+{% elif name == "check" %}
+<svg width="{{ size }}" height="{{ size }}" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="{{ class }}" aria-hidden="true">
+  <polyline points="20 6 9 17 4 12"></polyline>
+</svg>
+{% elif name == "chevron-down" %}
+<svg width="{{ size }}" height="{{ size }}" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="{{ class }}" aria-hidden="true">
+  <polyline points="6 9 12 15 18 9"></polyline>
+</svg>
+{% elif name == "info" %}
+<svg width="{{ size }}" height="{{ size }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="{{ class }}" aria-hidden="true">
+  <circle cx="12" cy="12" r="10"></circle>
+  <line x1="12" y1="16" x2="12" y2="12"></line>
+  <line x1="12" y1="8" x2="12.01" y2="8"></line>
+</svg>
+{% else %}
+<svg width="{{ size }}" height="{{ size }}" viewBox="0 0 20 20" class="{{ class }}" aria-hidden="true">
+  <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="2"></circle>
+</svg>
+{% endif %}
+{% endmacro %}

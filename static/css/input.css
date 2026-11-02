@@ -1,0 +1,335 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   QuantAI Apple-Style Design Tokens
+   Extracted from approved design reference: E:\QuantAI-design\Main.dc.html
+   ========================================================================== */
+
+:root, .ui {
+  --bg: #f5f5f7;
+  --card: #ffffff;
+  --fill: #f0f0f3;
+  --text: #1d1d1f;
+  --muted: #6e6e73;
+  --line: rgba(0, 0, 0, 0.08);
+  --link: #0066cc;
+  --up: #1a9c3c;
+  --upt: #1a7f37;
+  --upbg: #e6f4ea;
+  --warn: #b25000;
+  --warnbg: #fff1e0;
+  --info: #0050a0;
+  --infobg: #eaf2fd;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 28px rgba(0, 0, 0, 0.05);
+  --glass: rgba(245, 245, 247, 0.8);
+  --tt: #1d1d1f;
+  --ttt: #ffffff;
+  --tts: #a1a1a6;
+  --segon: #ffffff;
+  --track: #e5e5ea;
+  --chip: #ffffff;
+  --brand: #1d1d1f;
+  --brandi: #ffffff;
+  --grid: #ececf0;
+}
+
+[data-theme="dark"], .dark, .ui[data-theme="dark"] {
+  --bg: #000000;
+  --card: #1c1c1e;
+  --fill: #2c2c2e;
+  --text: #f5f5f7;
+  --muted: #a1a1a6;
+  --line: rgba(255, 255, 255, 0.12);
+  --link: #2997ff;
+  --up: #30d158;
+  --upt: #30d158;
+  --upbg: rgba(48, 209, 88, 0.16);
+  --warn: #ffb340;
+  --warnbg: rgba(255, 179, 64, 0.16);
+  --info: #64b5ff;
+  --infobg: rgba(10, 132, 255, 0.2);
+  --shadow: 0 0 0 1px rgba(255, 255, 255, 0.06);
+  --glass: rgba(0, 0, 0, 0.72);
+  --tt: #f5f5f7;
+  --ttt: #1d1d1f;
+  --tts: #6e6e73;
+  --segon: #636366;
+  --track: #3a3a3c;
+  --chip: #1c1c1e;
+  --brand: #f5f5f7;
+  --brandi: #000000;
+  --grid: #2c2c2e;
+}
+
+/* ==========================================================================
+   Base Styles & Typography
+   ========================================================================== */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Segoe UI", sans-serif;
+  letter-spacing: -0.011em;
+  transition: background-color 0.35s ease, color 0.35s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.ui {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Segoe UI", sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  letter-spacing: -0.011em;
+  transition: background-color 0.35s, color 0.35s;
+}
+
+a {
+  color: var(--link);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+summary {
+  cursor: pointer;
+  color: var(--link);
+  font-size: 14px;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+summary:focus-visible {
+  outline: 3px solid #0071e3;
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Component Primitives
+   ========================================================================== */
+
+.card {
+  background: var(--card);
+  border-radius: 22px;
+  padding: 28px;
+  box-shadow: var(--shadow);
+  transition: background-color 0.35s, transform 0.25s;
+}
+
+.lift:hover {
+  transform: translateY(-2px);
+}
+
+.eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 6px;
+}
+
+.h2 {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.chip {
+  border: 0;
+  background: var(--chip);
+  border-radius: 999px;
+  padding: 9px 18px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  color: var(--text);
+  box-shadow: 0 0 0 1px var(--line);
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.chip:hover {
+  transform: scale(1.04);
+}
+
+.segs {
+  display: flex;
+  gap: 2px;
+  background: var(--fill);
+  border-radius: 10px;
+  padding: 3px;
+}
+
+.seg {
+  border: 0;
+  background: transparent;
+  border-radius: 8px;
+  padding: 7px 13px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.seg.on {
+  background: var(--segon);
+  color: var(--text);
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+}
+
+.metric {
+  background: var(--fill);
+  border-radius: 16px;
+  padding: 18px;
+}
+
+.metric b {
+  display: block;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-top: 4px;
+}
+
+.b {
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 4px 12px;
+  white-space: nowrap;
+}
+
+.hi {
+  color: var(--warn);
+  background: var(--warnbg);
+}
+
+.lo, .na {
+  color: var(--muted);
+  background: var(--fill);
+}
+
+.live {
+  color: var(--upt);
+  background: var(--upbg);
+}
+
+.cache {
+  color: var(--info);
+  background: var(--infobg);
+}
+
+/* ==========================================================================
+   Grids & Layout Structures
+   ========================================================================== */
+
+.g4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.g3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+}
+
+.m3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.ga {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 24px;
+}
+
+.gb {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 24px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+/* ==========================================================================
+   Animations & Responsive Breakpoints
+   ========================================================================== */
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, var(--fill) 0%, var(--card) 50%, var(--fill) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@media (max-width: 900px) {
+  .g4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .m3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .g3, .ga, .gb {
+    grid-template-columns: 1fr;
+  }
+  .nav {
+    display: none;
+  }
+  .hero {
+    font-size: 38px !important;
+  }
+  .price {
+    font-size: 40px !important;
+  }
+  .idrow {
+    flex-direction: column;
+    align-items: flex-start !important;
+  }
+  .pr {
+    text-align: left !important;
+  }
+  .pad {
+    padding: 22px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

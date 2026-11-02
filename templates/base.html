@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <title>{% block title %}QuantAI — Analyst's Ledger{% endblock %}</title>
-    <meta name="description" content="A focused financial research desk powered by the QuantAI Finance Agent." />
+    <title>{% block title %}QuantAI{% endblock %}</title>
+    <meta name="description" content="Research any company. Know what is evidence. Live market data, deterministic signals and a sourced AI brief, kept strictly apart." />
     <link rel="icon" type="image/png" href="/static/assets/analysts-ledger-logo.png" />
     <link rel="stylesheet" href="/static/css/app.css" />
     <script>
@@ -20,9 +20,39 @@
     </script>
     {% block head %}{% endblock %}
   </head>
-  <body class="min-h-screen bg-slate-50 dark:bg-black text-slate-900 dark:text-slate-100 antialiased selection:bg-blue-500 selection:text-white">
-    <div id="app" class="flex min-h-screen flex-col">
+  <body class="ui">
+    <div id="app" class="min-h-screen flex flex-col">
+      <header style="position:sticky;top:0;z-index:50;background:var(--glass);backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--line)">
+        <div class="row" style="max-width:1160px;margin:0 auto;height:56px;padding:0 24px">
+          <div style="display:flex;align-items:center;gap:10px;font-weight:600;font-size:17px">
+            <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect width="26" height="26" rx="7" style="fill:var(--brand)"></rect><path d="M5 18l5-6 4 3 7-9" fill="none" style="stroke:var(--brandi)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            QuantAI
+          </div>
+          <nav class="nav" style="display:flex;gap:28px;font-size:14px" aria-label="Sections">
+            <a href="#snapshot" style="color:var(--text)">Snapshot</a>
+            <a href="#performance" style="color:var(--text)">Performance</a>
+            <a href="#fundamentals" style="color:var(--text)">Fundamentals</a>
+            <a href="#news" style="color:var(--text)">News</a>
+            <a href="#analysis" style="color:var(--text)">Analysis</a>
+          </nav>
+          <div style="display:flex;align-items:center;gap:14px;font-size:13px" class="muted">
+            <span style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--up)"></span>Ready</span>
+            {% block header_theme %}
+            <div class="segs" role="group" aria-label="Theme">
+              <button type="button" class="seg" data-theme-btn="light">Light</button>
+              <button type="button" class="seg" data-theme-btn="dark">Dark</button>
+              <button type="button" class="seg on" data-theme-btn="system">System</button>
+            </div>
+            {% endblock %}
+          </div>
+        </div>
+      </header>
+
       {% block content %}{% endblock %}
+
+      <button type="button" style="position:fixed;right:32px;bottom:32px;border:0;background:var(--text);color:var(--bg);font-size:15px;font-weight:600;font-family:inherit;border-radius:999px;padding:16px 26px;box-shadow:0 12px 32px rgba(0,0,0,.25);cursor:pointer">
+        Ask the research desk
+      </button>
     </div>
     {% block scripts %}{% endblock %}
   </body>

@@ -1,0 +1,14 @@
+{# Reusable Metric Card Macro #}
+{% macro render(label, value, variant="card", class="") %}
+{% if variant == "card" %}
+<div class="card lift p-[22px] {{ class }}">
+  <p class="eyebrow">{{ label }}</p>
+  <b class="text-[26px] tracking-[-0.02em] text-[var(--text)]">{{ value }}</b>
+</div>
+{% else %}
+<div class="metric {{ class }}">
+  <span class="muted text-[13px]">{{ label }}</span>
+  <b>{{ value }}</b>
+</div>
+{% endif %}
+{% endmacro %}

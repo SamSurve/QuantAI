@@ -1,0 +1,10 @@
+{# Reusable Apple-style QuantAI brand mark macro #}
+{% macro render(size=26, show_text=True, class="") %}
+<div class="flex items-center gap-2.5 font-semibold text-[17px] {{ class }}">
+  <svg width="{{ size }}" height="{{ size }}" viewBox="0 0 26 26" aria-hidden="true">
+    <rect width="26" height="26" rx="7" style="fill:var(--brand)"></rect>
+    <path d="M5 18l5-6 4 3 7-9" fill="none" style="stroke:var(--brandi)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path>
+  </svg>
+  {% if show_text %}<span>QuantAI</span>{% endif %}
+</div>
+{% endmacro %}
