@@ -186,7 +186,7 @@ def prefix_stripped_health() -> dict[str, Any]:
 
 
 # Register root content negotiation and web routes
-register_web_routes(app, health_payload)
+register_web_routes(app, health_payload, research_orchestrator=research_orchestrator)
 
 
 @app.post("/api/research", response_model=ResearchResponse, responses={

@@ -9,6 +9,9 @@ from fastapi import APIRouter, FastAPI, Request, Response
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 
+from api.research_errors import ResearchError
+from api.web.research import classify_research_error, orchestrate_dual_research
+
 TEMPLATES_DIR = Path(__file__).resolve().parents[2] / "templates"
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
@@ -66,7 +69,11 @@ def render_not_found(request: Request) -> HTMLResponse:
     )
 
 
-def register_web_routes(app: FastAPI, health_provider: Callable[[], dict[str, Any]]) -> None:
+def register_web_routes(
+    app: FastAPI,
+    health_provider: Callable[[], dict[str, Any]],
+    research_orchestrator: Any = None,
+) -> None:
     """Register server-rendered workspace routes with root content negotiation."""
 
     @app.get("/", include_in_schema=False)
@@ -76,7 +83,7 @@ def register_web_routes(app: FastAPI, health_provider: Callable[[], dict[str, An
             return templates.TemplateResponse(
                 request=request,
                 name="pages/home.html",
-                context={},
+                context={"state": "idle"},
             )
         return JSONResponse(content=health_provider())
 
@@ -88,9 +95,35 @@ def register_web_routes(app: FastAPI, health_provider: Callable[[], dict[str, An
     async def web_research_endpoint(request: Request, query: str = "") -> Response:
         accept = request.headers.get("accept")
         if prefers_html_over_json(accept):
+            normalized = query.strip()
+            if normalized and research_orchestrator:
+                try:
+                    req_id = getattr(request.state, "request_id", "web-req")
+                    result = await orchestrate_dual_research(normalized, req_id, research_orchestrator)
+                    return templates.TemplateResponse(
+                        request=request,
+                        name="pages/home.html",
+                        context={
+                            "query": normalized,
+                            "company": result.company,
+                            "market": result.market,
+                            "state": "success" if result.status.overall == "complete" else "partial",
+                        },
+                    )
+                except ResearchError as err:
+                    return templates.TemplateResponse(
+                        request=request,
+                        name="pages/home.html",
+                        context={
+                            "query": normalized,
+                            "state": "error",
+                            "error_kind": classify_research_error(err.message),
+                            "error_message": err.message,
+                        },
+                    )
             return templates.TemplateResponse(
                 request=request,
                 name="pages/home.html",
-                context={"query": query},
+                context={"query": query, "state": "idle"},
             )
         return JSONResponse(status_code=400, content={"message": "Use POST /api/research for JSON API"})

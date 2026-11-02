@@ -16,7 +16,18 @@
   </section>
 
   <div id="research-results">
-    {# Research results will be rendered here in Parts 09 and 10 #}
+    {% if state == "loading" %}
+      {% include "partials/research_skeleton.html" %}
+    {% elif state == "error" %}
+      {% include "partials/research_status.html" %}
+    {% elif company %}
+      {% if state == "partial" %}
+        {% include "partials/research_status.html" %}
+      {% endif %}
+      {% include "partials/identity_dossier.html" %}
+    {% else %}
+      {% include "partials/research_status.html" %}
+    {% endif %}
   </div>
 </main>
 {% endblock %}

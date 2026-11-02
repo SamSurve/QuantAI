@@ -1,0 +1,52 @@
+{# Company Identity Dossier & Price/Change Display #}
+<section class="row idrow" style="align-items:flex-end;margin-bottom:24px">
+  <div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+      <span style="font-size:13px;font-weight:600;background:var(--brand);color:var(--brandi);border-radius:8px;padding:4px 10px">
+        {{ company.symbol if company else "—" }}
+      </span>
+      {% if company %}
+        {% set conf = (company.identifier_confidence.value if (company.identifier_confidence is defined and company.identifier_confidence.value is defined) else (company.identifier_confidence if company.identifier_confidence is defined else (company.confidence if company.confidence is defined else "low")))|string|lower %}
+        {% if conf in ["high", "medium"] %}
+        <span class="b live">Verified identity</span>
+        {% elif conf == "ambiguous" %}
+        <span class="b hi">Ambiguous identity</span>
+        {% else %}
+        <span class="b lo">Pending verification</span>
+        {% endif %}
+      {% else %}
+        <span class="b lo">Pending verification</span>
+      {% endif %}
+    </div>
+    <h2 style="font-size:40px;font-weight:700;letter-spacing:-0.03em;margin:0">
+      {{ company.name if (company and company.name) else (company.symbol if company else "—") }}
+    </h2>
+    <p class="muted" style="margin:6px 0 0;font-size:16px">
+      {% set metadata_items = [] %}
+      {% if company and company.sector %}{% set _ = metadata_items.append(company.sector) %}{% endif %}
+      {% if company and company.industry %}{% set _ = metadata_items.append(company.industry) %}{% endif %}
+      {% if company and company.exchange %}{% set _ = metadata_items.append(company.exchange) %}{% endif %}
+      {{ metadata_items|join(" · ") if metadata_items else "Market metadata unavailable" }}
+    </p>
+  </div>
+
+  <div class="pr" style="text-align:right">
+    {% if market and market.current_price is not none %}
+    <div class="price" style="font-size:56px;font-weight:700;letter-spacing:-0.04em;line-height:1">
+      ${{ "%.2f"|format(market.current_price) }}
+    </div>
+    {% if market.daily_change is not none and market.daily_change_percent is not none %}
+    {% set is_pos = market.daily_change >= 0 %}
+    <div class="price-change {% if is_pos %}positive text-[var(--up)]{% else %}negative text-[var(--destructive)]{% endif %}" style="margin-top:8px;font-size:17px;font-weight:600;color:{% if is_pos %}var(--upt){% else %}var(--warn){% endif %}">
+      {% if is_pos %}+{% endif %}{{ "%.2f"|format(market.daily_change) }} ({% if is_pos %}+{% endif %}{{ "%.2f"|format(market.daily_change_percent) }}%)
+    </div>
+    {% endif %}
+    <div class="muted" style="font-size:13px;margin-top:4px">
+      {{ quote_label or "Quote from provider" }}{% if as_of %} · {{ as_of }}{% endif %}
+    </div>
+    {% else %}
+    <div class="price" style="font-size:56px;font-weight:700;letter-spacing:-0.04em;line-height:1">—</div>
+    <div class="muted" style="font-size:13px;margin-top:4px">Quote unavailable</div>
+    {% endif %}
+  </div>
+</section>

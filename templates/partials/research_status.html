@@ -1,0 +1,40 @@
+{# Research status and error guidance banner #}
+{% if state == "loading" %}
+<div class="card p-4 mb-6 flex items-center gap-3 text-sm text-[var(--muted)]" role="status" aria-live="polite">
+  <span class="inline-block w-4 h-4 rounded-full border-2 border-[var(--link)] border-t-transparent animate-spin"></span>
+  <span>Building a sourced research record{% if query %} for <strong>{{ query }}</strong>{% endif %}…</span>
+</div>
+{% elif state == "error" %}
+<div class="card p-5 mb-6 border-l-4 border-l-[var(--warn)] bg-[var(--warnbg)]" role="alert" aria-live="assertive">
+  <div class="flex items-start gap-3">
+    <div class="text-[var(--warn)] font-semibold text-sm">
+      Research request needs attention
+    </div>
+  </div>
+  <p class="text-sm text-[var(--text)] mt-1.5 leading-relaxed">
+    {% if error_kind == "ambiguous" %}
+    More than one company matched. Try a ticker or a more specific company name.
+    {% elif error_kind == "not_found" %}
+    No verified company record was found. Check the spelling or search by ticker.
+    {% elif error_kind == "news_unavailable" %}
+    The research record is available with a missing news source. Other sourced evidence remains visible.
+    {% else %}
+    The request could not complete. Check the research endpoint, then try again.
+    {% endif %}
+  </p>
+</div>
+{% elif state == "partial" or error_kind == "ai_unavailable" %}
+<div class="card p-4 mb-6 border-l-4 border-l-[var(--info)] bg-[var(--infobg)]" role="status" aria-live="polite">
+  <p class="text-sm text-[var(--text)] leading-relaxed">
+    The sourced research record remains useful, but optional AI interpretation is temporarily unavailable.
+  </p>
+</div>
+{% elif state == "idle" %}
+<div class="text-center py-6 text-sm text-[var(--muted)]">
+  Ready for a company or ticker.
+</div>
+{% elif state == "success" %}
+<div class="text-xs text-[var(--muted)] py-1">
+  Sourced research record available.
+</div>
+{% endif %}

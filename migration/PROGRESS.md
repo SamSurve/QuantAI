@@ -19,7 +19,7 @@ Schedule: 3 days / 6 batches / 30 parts
 - [x] PART 04 — Formatting and data presenters
 - [x] PART 05 — FastAPI application and base HTML shell
 
-Batch status: NOT STARTED
+Batch status: COMPLETE
 
 Stop after Part 05.
 
@@ -29,13 +29,13 @@ Stop after Part 05.
 - [x] PART 07 — Persistent theme system
 - [x] PART 08 — Company search and shortcuts
 - [x] PART 09 — Research orchestration and error guidance
-- [ ] PART 10 — Identity dossier and research states
+- [x] PART 10 — Identity dossier and research states
 
-Batch status: NOT STARTED
+Batch status: COMPLETE
 
 Stop after Part 10.
 
-DAY 1 STATUS: NOT STARTED
+DAY 1 STATUS: COMPLETE
 
 ---
 
