@@ -1,0 +1,30 @@
+{# Apple-style Pill Search Form and Quick-Search Chips #}
+<form id="search-form" action="/research" method="GET" style="max-width:640px;margin:0 auto;display:flex;align-items:center;gap:12px;background:var(--card);border-radius:999px;padding:8px 8px 8px 24px;box-shadow:0 0 0 1px var(--line),0 12px 40px rgba(0,0,0,.08)">
+  <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+    <circle cx="8.5" cy="8.5" r="6" fill="none" style="stroke:var(--muted)" stroke-width="2"></circle>
+    <path d="M13 13l5 5" style="stroke:var(--muted)" stroke-width="2" stroke-linecap="round"></path>
+  </svg>
+  <input
+    id="search-input"
+    name="query"
+    type="text"
+    aria-label="Company or ticker"
+    placeholder="Search a company or ticker"
+    value="{{ query or '' }}"
+    style="flex:1;min-width:0;border:0;outline:0;background:transparent;font-size:18px;font-family:inherit;color:var(--text)"
+    autocomplete="off"
+  />
+  <button
+    id="search-button"
+    type="submit"
+    style="border:0;background:#0071e3;color:#fff;font-size:15px;font-weight:600;font-family:inherit;border-radius:999px;padding:12px 24px;cursor:pointer;white-space:nowrap"
+  >
+    Research
+  </button>
+</form>
+
+<div style="display:flex;justify-content:center;gap:10px;margin-top:18px;flex-wrap:wrap" role="group" aria-label="Quick search shortcuts">
+  {% for ticker in starter_tickers or ["AAPL", "MSFT", "NVDA", "TSLA"] %}
+  <button type="button" class="chip" data-quick-search="{{ ticker }}" aria-label="Search {{ ticker }}">{{ ticker }}</button>
+  {% endfor %}
+</div>
