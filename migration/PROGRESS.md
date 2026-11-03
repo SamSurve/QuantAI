@@ -44,7 +44,7 @@ DAY 1 STATUS: COMPLETE
 ## BATCH 03 — Parts 11–15
 
 - [x] PART 11 — Market quote and snapshot
-- [ ] PART 12 — Interactive chart and performance
+- [x] PART 12 — Interactive chart and performance
 - [ ] PART 13 — Deterministic market signals
 - [ ] PART 14 — Financial fundamentals
 - [ ] PART 15 — Company profile, governance and mapping

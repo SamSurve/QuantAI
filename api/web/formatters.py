@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+import re
 from typing import Literal
 
 CURRENCY_SYMBOLS = {
@@ -166,3 +167,27 @@ def format_date(date_str: str | None, fallback: str = "Date unavailable") -> str
     if len(stripped) >= 10 and stripped[:10].replace("-", "").isdigit():
         return stripped[:10]
     return fallback
+
+
+MONTH_NAMES = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+]
+
+
+def format_chart_date(value: str | int | float) -> str:
+    """Format calendar date for chart axis/tooltip (e.g. 'Aug 03').
+
+    Matches original MarketChart.tsx formatChartDate contract.
+    """
+    raw = str(value)
+    m = re.match(r"^(\d{4})-(\d{2})-(\d{2})", raw)
+    if m:
+        try:
+            month_idx = int(m.group(2)) - 1
+            day_str = m.group(3)
+            if 0 <= month_idx < 12:
+                return f"{MONTH_NAMES[month_idx]} {day_str}"
+        except Exception:
+            pass
+    return raw[:10]

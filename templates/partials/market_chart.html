@@ -1,0 +1,30 @@
+{# Interactive Market Chart Section: 7 Period Controls, Gradient Canvas, Performance Stats #}
+<section id="performance" class="card pad" style="margin-bottom:24px" aria-labelledby="performance-heading">
+  <div class="row" style="margin-bottom:20px;flex-wrap:wrap">
+    <h3 id="performance-heading" class="h2" style="font-size:24px;font-weight:700;margin:0;letter-spacing:-0.02em">Price history</h3>
+    <div class="segs" role="tablist" aria-label="History period">
+      {% for p in ["1D", "1W", "1M", "3M", "6M", "1Y", "5Y"] %}
+      <button type="button" class="seg period-btn {% if p == (default_period or '6M') %}on{% endif %}" data-period="{{ p }}" role="tab" aria-selected="{{ 'true' if p == (default_period or '6M') else 'false' }}">{{ p }}</button>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div id="chart-empty-state" style="padding:48px 24px;text-align:center;display:{% if chart_points is defined and chart_points|length < 2 and not chart_data_json %}block{% else %}none{% endif %}" class="muted">
+    <p style="font-size:18px;font-weight:600;margin-bottom:8px">Price history appears when the research record includes dated closes.</p>
+    <p style="font-size:14px;margin:0">The plot only renders returned research data; it never uses placeholder market movement.</p>
+  </div>
+
+  <div id="chart-canvas-container" style="position:relative;width:100%;height:280px;display:{% if chart_points is defined and chart_points|length < 2 and not chart_data_json %}none{% else %}block{% endif %}">
+    <canvas id="marketChartCanvas" style="display:block;width:100%;height:100%"></canvas>
+  </div>
+
+  <div id="chart-stats-row" style="display:flex;gap:36px;margin-top:16px;font-size:14px;flex-wrap:wrap" class="muted">
+    <span>Period low <b id="chartPeriodLow" style="color:var(--text)">—</b></span>
+    <span>Period high <b id="chartPeriodHigh" style="color:var(--text)">—</b></span>
+    <span>Change <b id="chartPeriodChange" style="color:var(--upt)">—</b></span>
+  </div>
+
+  <script id="chart-data" type="application/json">
+    {{ chart_data_json|safe if chart_data_json else "{}" }}
+  </script>
+</section>

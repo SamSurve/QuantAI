@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 from typing import Any, Callable
 
@@ -102,6 +103,11 @@ def register_web_routes(
                     req_id = getattr(request.state, "request_id", "web-req")
                     result = await orchestrate_dual_research(normalized, req_id, research_orchestrator)
                     brief = market_brief_from_research(result)
+                    chart_payload = {
+                        "intraday": [p.model_dump() for p in brief.priceHistory.intraday],
+                        "daily": [p.model_dump() for p in brief.priceHistory.daily],
+                        "defaultPeriod": brief.priceHistory.defaultPeriod,
+                    }
                     return templates.TemplateResponse(
                         request=request,
                         name="pages/home.html",
@@ -112,6 +118,9 @@ def register_web_routes(
                             "brief": brief,
                             "metrics": brief.metrics,
                             "quote_label": brief.quoteLabel,
+                            "chart_points": brief.priceHistory.daily,
+                            "chart_data_json": json.dumps(chart_payload),
+                            "default_period": brief.priceHistory.defaultPeriod,
                             "state": "success" if result.status.overall == "complete" else "partial",
                         },
                     )

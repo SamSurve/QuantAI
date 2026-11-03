@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
-from typing import cast
+import datetime
+import math
+from typing import Any, cast
 
 from api.web.contracts import (
     BriefNewsItem,
@@ -92,6 +94,77 @@ def snapshot_metrics_from_market(
             tone="neutral",
         ),
     ]
+
+
+PERIOD_DAYS: dict[str, int] = {
+    "1W": 7,
+    "1M": 31,
+    "3M": 92,
+    "6M": 184,
+    "1Y": 366,
+}
+
+
+def _parse_ts(ts_str: str) -> float:
+    try:
+        clean = ts_str.strip()
+        if clean.endswith("Z"):
+            clean = clean[:-1] + "+00:00"
+        if len(clean) == 10 and clean.count("-") == 2:
+            clean = clean + "T00:00:00+00:00"
+        dt = datetime.datetime.fromisoformat(clean)
+        return dt.timestamp()
+    except Exception:
+        try:
+            return float(ts_str)
+        except Exception:
+            return 0.0
+
+
+def slice_period_series(
+    intraday: list[ChartPoint],
+    daily: list[ChartPoint],
+    period: str,
+) -> list[ChartPoint]:
+    """Slice price history client/server side matching TypeScript periodSeries."""
+    if period == "1D":
+        return intraday
+    if not daily:
+        return []
+    if period == "5Y":
+        return daily
+
+    days = PERIOD_DAYS.get(period)
+    if days is None:
+        return daily
+
+    latest_ts = _parse_ts(daily[-1].label)
+    cutoff = latest_ts - (days * 24 * 60 * 60)
+    return [p for p in daily if _parse_ts(p.label) >= cutoff]
+
+
+def calculate_performance_summary(
+    series: list[ChartPoint] | list[dict[str, Any]],
+) -> dict[str, float] | None:
+    """Calculate low, high, and percentage change over series."""
+    if len(series) < 2:
+        return None
+
+    def get_val(item: Any) -> float:
+        if isinstance(item, dict):
+            return float(item.get("value", 0.0))
+        return float(getattr(item, "value", 0.0))
+
+    values = [get_val(p) for p in series]
+    first = values[0]
+    last = values[-1]
+    if first == 0 or not math.isfinite(first) or not math.isfinite(last):
+        return None
+
+    low = min(values)
+    high = max(values)
+    change = ((last - first) / first) * 100.0
+    return {"low": low, "high": high, "change": change}
 
 
 def empty_market_brief() -> MarketBrief:
