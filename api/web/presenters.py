@@ -50,13 +50,15 @@ def snapshot_metrics_from_market(
     market: MarketSnapshot | None,
     currency: str | None = None,
     market_cap_currency: str | None = None,
+    market_cap: float | None = None,
 ) -> list[Metric]:
     """Generate all seven snapshot metrics with original formatting and fallbacks."""
     mc_curr = market_cap_currency or currency
+    resolved_mc = market_cap if market_cap is not None else (market.market_cap if market else None)
     return [
         Metric(
             label="Market cap",
-            value=compact_money_label(market.market_cap if market else None, mc_curr),
+            value=compact_money_label(resolved_mc, mc_curr),
             tone="neutral",
         ),
         Metric(
@@ -320,6 +322,7 @@ def market_brief_from_research(research: TypedResearchResponse) -> MarketBrief:
         market,
         currency=currency,
         market_cap_currency=market_cap_currency,
+        market_cap=market_cap,
     )
 
     # News items

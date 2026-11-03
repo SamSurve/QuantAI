@@ -11,6 +11,11 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 
 from api.research_errors import ResearchError
+from api.web.company_profile import (
+    format_company_profile,
+    format_competitor_evidence,
+    format_governance,
+)
 from api.web.fundamentals import format_financial_health
 from api.web.presenters import market_brief_from_research
 from api.web.research import classify_research_error, orchestrate_dual_research
@@ -104,8 +109,17 @@ def register_web_routes(
                     req_id = getattr(request.state, "request_id", "web-req")
                     result = await orchestrate_dual_research(normalized, req_id, research_orchestrator)
                     brief = market_brief_from_research(result)
-                    fh = result.company_deep_analysis.financial_health if result.company_deep_analysis else None
+                    deep = result.company_deep_analysis
+                    fh = deep.financial_health if deep else None
+                    overview = deep.company_overview if deep else None
+                    gov = deep.governance if deep else None
+                    comp = deep.competitive_evidence if deep else None
+
                     fundamentals_data = format_financial_health(fh)
+                    profile_data = format_company_profile(overview, result.company)
+                    governance_data = format_governance(gov)
+                    competitors_data = format_competitor_evidence(comp)
+
                     chart_payload = {
                         "intraday": [p.model_dump() for p in brief.priceHistory.intraday],
                         "daily": [p.model_dump() for p in brief.priceHistory.daily],
@@ -123,6 +137,9 @@ def register_web_routes(
                             "quote_label": brief.quoteLabel,
                             "signal": brief.signal,
                             "fundamentals": fundamentals_data,
+                            "profile": profile_data,
+                            "governance": governance_data,
+                            "competitors": competitors_data,
                             "chart_points": brief.priceHistory.daily,
                             "chart_data_json": json.dumps(chart_payload),
                             "default_period": brief.priceHistory.defaultPeriod,

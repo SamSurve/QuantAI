@@ -1,0 +1,47 @@
+{# Company Profile · Verified Corporate Dossier #}
+<div id="company-profile" class="card pad">
+  <p class="eyebrow">Company profile · verified</p>
+
+  {% if profile and profile.description %}
+    <p style="font-size:15px;line-height:1.6;margin:14px 0 20px;color:var(--text)">{{ profile.description }}</p>
+  {% else %}
+    <p class="muted" style="font-size:14px;line-height:1.5;margin:14px 0 20px">No business description was returned for this record.</p>
+  {% endif %}
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px">
+    <div style="background:var(--fill);border-radius:14px;padding:12px 16px">
+      <span class="muted" style="font-size:12px;display:block;margin-bottom:2px">Sector</span>
+      <b style="font-size:14px;color:var(--text)">{{ profile.sector if profile and profile.sector else "Unavailable" }}</b>
+    </div>
+    <div style="background:var(--fill);border-radius:14px;padding:12px 16px">
+      <span class="muted" style="font-size:12px;display:block;margin-bottom:2px">Industry</span>
+      <b style="font-size:14px;color:var(--text)">{{ profile.industry if profile and profile.industry else "Unavailable" }}</b>
+    </div>
+    <div style="background:var(--fill);border-radius:14px;padding:12px 16px">
+      <span class="muted" style="font-size:12px;display:block;margin-bottom:2px">Exchange</span>
+      <b style="font-size:14px;color:var(--text)">{{ profile.exchange if profile and profile.exchange else "Unavailable" }}</b>
+    </div>
+    <div style="background:var(--fill);border-radius:14px;padding:12px 16px">
+      <span class="muted" style="font-size:12px;display:block;margin-bottom:2px">Country</span>
+      <b style="font-size:14px;color:var(--text)">{{ profile.country if profile and profile.country else "Unavailable" }}</b>
+    </div>
+    <div style="background:var(--fill);border-radius:14px;padding:12px 16px">
+      <span class="muted" style="font-size:12px;display:block;margin-bottom:2px">Headquarters</span>
+      <b style="font-size:14px;color:var(--text)">{{ profile.headquarters if profile and profile.headquarters else "Unavailable" }}</b>
+    </div>
+    <div style="background:var(--fill);border-radius:14px;padding:12px 16px">
+      <span class="muted" style="font-size:12px;display:block;margin-bottom:2px">Employees</span>
+      <b style="font-size:14px;color:var(--text)">{{ profile.employees if profile and profile.employees else "Unavailable" }}</b>
+    </div>
+    <div style="background:var(--fill);border-radius:14px;padding:12px 16px;grid-column:1 / -1">
+      <span class="muted" style="font-size:12px;display:block;margin-bottom:2px">Official website</span>
+      {% if profile and profile.website and profile.is_safe_website %}
+        <a href="{{ profile.website }}" target="_blank" rel="noopener noreferrer" style="color:var(--link);font-size:14px;font-weight:600;text-decoration:none;word-break:break-all">
+          {{ profile.website }} ↗
+        </a>
+      {% else %}
+        <span class="muted" style="font-size:14px">Unavailable</span>
+      {% endif %}
+    </div>
+  </div>
+</div>

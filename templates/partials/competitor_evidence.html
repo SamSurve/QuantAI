@@ -1,0 +1,19 @@
+{# Competitive Evidence · Sourced Peer Landscape #}
+<div id="competitor-evidence" class="card pad">
+  <p class="eyebrow">Competitive evidence · sourced</p>
+
+  <p style="font-size:14px;line-height:1.6;margin:14px 0;color:var(--text)">
+    {{ competitors.note if competitors else "Insufficient verified competitor data." }}
+  </p>
+
+  {% if competitors and competitors.competitors %}
+  <div style="margin-top:12px">
+    <span class="muted" style="font-size:12px;text-transform:uppercase;letter-spacing:0.04em;display:block;margin-bottom:8px">Identified Competitors</span>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      {% for c in competitors.competitors %}
+      <span class="chip" style="cursor:default;font-weight:600">{{ c }}</span>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>

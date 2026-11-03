@@ -1,0 +1,35 @@
+{# Governance · Executive Roster & Sourced Management #}
+<div id="governance" class="card pad">
+  <p class="eyebrow">Governance · executive roster</p>
+
+  <div style="background:var(--fill);border-radius:16px;padding:16px 20px;margin-top:14px">
+    <span class="muted" style="font-size:12px;text-transform:uppercase;letter-spacing:0.04em;display:block">Verified Chief Executive</span>
+    <b style="font-size:16px;letter-spacing:-0.01em;color:var(--text);display:block;margin-top:4px">
+      {{ governance.ceo_display if governance else "Insufficient verified data." }}
+    </b>
+  </div>
+
+  <div style="margin-top:16px">
+    <span class="muted" style="font-size:12px;text-transform:uppercase;letter-spacing:0.04em;display:block;margin-bottom:8px">Key Executive Leadership</span>
+    {% if governance and governance.leadership %}
+      <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px">
+        {% for person in governance.leadership %}
+        <li style="background:var(--fill);border-radius:12px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+          <span style="font-size:13px;font-weight:600;color:var(--text)">{{ person.name }}</span>
+          <span class="muted" style="font-size:12px">
+            {{ person.title if person.title else "" }}{% if person.since %} · since {{ person.since }}{% endif %}
+          </span>
+        </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="muted" style="font-size:13px;margin:0;padding:12px 0">No verified leadership record was returned.</p>
+    {% endif %}
+  </div>
+
+  {% if governance and governance.note %}
+  <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--line);font-size:12px;line-height:1.5" class="muted">
+    {{ governance.note }}
+  </div>
+  {% endif %}
+</div>

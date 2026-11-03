@@ -31,6 +31,13 @@
         {% include "partials/signal_score.html" %}
         {% include "partials/fundamentals.html" %}
       </section>
+      <section class="gb" style="margin-bottom:24px">
+        {% include "partials/company_profile.html" %}
+        <div style="display:flex;flex-direction:column;gap:24px">
+          {% include "partials/governance.html" %}
+          {% include "partials/competitor_evidence.html" %}
+        </div>
+      </section>
     {% else %}
       {% include "partials/research_status.html" %}
     {% endif %}

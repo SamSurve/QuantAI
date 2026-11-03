@@ -64,6 +64,7 @@ class FreshnessState(str, Enum):
     CACHED = "cached"
     RECENT = "recent"
     UNAVAILABLE = "unavailable"
+    NOT_REQUESTED = "not_requested"
 
 
 class HistoryPeriod(str, Enum):

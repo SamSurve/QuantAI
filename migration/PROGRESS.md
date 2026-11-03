@@ -47,9 +47,9 @@ DAY 1 STATUS: COMPLETE
 - [x] PART 12 — Interactive chart and performance
 - [x] PART 13 — Deterministic market signals
 - [x] PART 14 — Financial fundamentals
-- [ ] PART 15 — Company profile, governance and mapping
+- [x] PART 15 — Company profile, governance and mapping
 
-Batch status: NOT STARTED
+Batch status: COMPLETE
 
 Stop after Part 15.
 
