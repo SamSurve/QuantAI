@@ -16,6 +16,9 @@
   --up: #1a9c3c;
   --upt: #1a7f37;
   --upbg: #e6f4ea;
+  --down: #e30000;
+  --downt: #c40000;
+  --downbg: #fde8e8;
   --warn: #b25000;
   --warnbg: #fff1e0;
   --info: #0050a0;
@@ -33,7 +36,7 @@
   --grid: #ececf0;
 }
 
-[data-theme="dark"], .dark, .ui[data-theme="dark"] {
+[data-theme="dark"], .dark, [data-theme="dark"] .ui, .ui[data-theme="dark"] {
   --bg: #000000;
   --card: #1c1c1e;
   --fill: #2c2c2e;
@@ -44,6 +47,9 @@
   --up: #30d158;
   --upt: #30d158;
   --upbg: rgba(48, 209, 88, 0.16);
+  --down: #ff453a;
+  --downt: #ff453a;
+  --downbg: rgba(255, 69, 58, 0.16);
   --warn: #ffb340;
   --warnbg: rgba(255, 179, 64, 0.16);
   --info: #64b5ff;
@@ -307,7 +313,7 @@ summary:focus-visible {
     grid-template-columns: 1fr;
   }
   .nav {
-    display: none;
+    display: none !important;
   }
   .hero {
     font-size: 38px !important;

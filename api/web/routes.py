@@ -10,6 +10,7 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 
 from api.research_errors import ResearchError
+from api.web.presenters import market_brief_from_research
 from api.web.research import classify_research_error, orchestrate_dual_research
 
 TEMPLATES_DIR = Path(__file__).resolve().parents[2] / "templates"
@@ -100,6 +101,7 @@ def register_web_routes(
                 try:
                     req_id = getattr(request.state, "request_id", "web-req")
                     result = await orchestrate_dual_research(normalized, req_id, research_orchestrator)
+                    brief = market_brief_from_research(result)
                     return templates.TemplateResponse(
                         request=request,
                         name="pages/home.html",
@@ -107,6 +109,9 @@ def register_web_routes(
                             "query": normalized,
                             "company": result.company,
                             "market": result.market,
+                            "brief": brief,
+                            "metrics": brief.metrics,
+                            "quote_label": brief.quoteLabel,
                             "state": "success" if result.status.overall == "complete" else "partial",
                         },
                     )

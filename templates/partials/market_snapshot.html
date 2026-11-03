@@ -1,0 +1,16 @@
+{# Market Snapshot Section: 7 Key Market Metrics + Source Status #}
+<section id="snapshot" class="g4" style="margin-bottom:24px" aria-label="Market snapshot">
+  {% if metrics %}
+    {% for m in metrics %}
+    <div class="card lift" style="padding:22px">
+      <p class="eyebrow">{{ m.label if m.label is defined else m.l }}</p>
+      <b style="font-size:26px;letter-spacing:-0.02em;color:var(--text)">{{ m.value if m.value is defined else m.v }}</b>
+    </div>
+    {% endfor %}
+  {% endif %}
+  <div class="card" style="padding:22px;background:var(--fill);box-shadow:none;display:flex;align-items:center">
+    <span class="muted" style="font-size:13px">
+      {{ quote_label or ("Latest close" if (market and market.market_status == "HISTORY_CLOSE_FALLBACK") else "Quote from provider") }}{% if as_of %} · {{ as_of }}{% elif market and market.as_of %} · {{ market.as_of }}{% endif %}
+    </span>
+  </div>
+</section>

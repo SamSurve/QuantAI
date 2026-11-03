@@ -44,6 +44,56 @@ METRIC_KEYS = [
 ]
 
 
+def snapshot_metrics_from_market(
+    market: MarketSnapshot | None,
+    currency: str | None = None,
+    market_cap_currency: str | None = None,
+) -> list[Metric]:
+    """Generate all seven snapshot metrics with original formatting and fallbacks."""
+    mc_curr = market_cap_currency or currency
+    return [
+        Metric(
+            label="Market cap",
+            value=compact_money_label(market.market_cap if market else None, mc_curr),
+            tone="neutral",
+        ),
+        Metric(
+            label="P / E ratio",
+            value=number_label(market.pe_ratio if market else None),
+            tone="neutral",
+        ),
+        Metric(
+            label="52-week high",
+            value=money_label(market.fifty_two_week_high if market else None, currency),
+            tone="neutral",
+        ),
+        Metric(
+            label="52-week low",
+            value=money_label(market.fifty_two_week_low if market else None, currency),
+            tone="neutral",
+        ),
+        Metric(
+            label="Volume",
+            value=number_label(market.volume if market else None, notation="compact"),
+            tone="neutral",
+        ),
+        Metric(
+            label="Dividend yield",
+            value=(
+                percent_label(market.dividend_yield * 100, include_sign=False)
+                if (market and market.dividend_yield is not None)
+                else "—"
+            ),
+            tone="neutral",
+        ),
+        Metric(
+            label="EPS",
+            value=money_label(market.eps if market else None, currency),
+            tone="neutral",
+        ),
+    ]
+
+
 def empty_market_brief() -> MarketBrief:
     """Return default empty MarketBrief structure awaiting research."""
     return MarketBrief(
@@ -193,23 +243,11 @@ def market_brief_from_research(research: TypedResearchResponse) -> MarketBrief:
         )
 
     # Metric tokens
-    metrics: list[Metric] = [
-        Metric(label="Market cap", value=compact_money_label(market_cap, market_cap_currency), tone="neutral"),
-        Metric(label="P / E ratio", value=number_label(market.pe_ratio if market else None), tone="neutral"),
-        Metric(label="52-week high", value=money_label(market.fifty_two_week_high if market else None, currency), tone="neutral"),
-        Metric(label="52-week low", value=money_label(market.fifty_two_week_low if market else None, currency), tone="neutral"),
-        Metric(label="Volume", value=number_label(market.volume if market else None, notation="compact"), tone="neutral"),
-        Metric(
-            label="Dividend yield",
-            value=(
-                percent_label(market.dividend_yield * 100, include_sign=False)
-                if (market and market.dividend_yield is not None)
-                else "—"
-            ),
-            tone="neutral",
-        ),
-        Metric(label="EPS", value=money_label(market.eps if market else None, currency), tone="neutral"),
-    ]
+    metrics: list[Metric] = snapshot_metrics_from_market(
+        market,
+        currency=currency,
+        market_cap_currency=market_cap_currency,
+    )
 
     # News items
     raw_news = (

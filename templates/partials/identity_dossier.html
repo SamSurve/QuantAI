@@ -36,13 +36,14 @@
       ${{ "%.2f"|format(market.current_price) }}
     </div>
     {% if market.daily_change is not none and market.daily_change_percent is not none %}
-    {% set is_pos = market.daily_change >= 0 %}
-    <div class="price-change {% if is_pos %}positive text-[var(--up)]{% else %}negative text-[var(--destructive)]{% endif %}" style="margin-top:8px;font-size:17px;font-weight:600;color:{% if is_pos %}var(--upt){% else %}var(--warn){% endif %}">
+    {% set is_pos = market.daily_change > 0 %}
+    {% set is_neg = market.daily_change < 0 %}
+    <div class="price-change {% if is_pos %}positive text-[var(--up)]{% elif is_neg %}negative text-[var(--down)]{% else %}neutral text-[var(--muted)]{% endif %}" style="margin-top:8px;font-size:17px;font-weight:600;color:{% if is_pos %}var(--upt){% elif is_neg %}var(--down){% else %}var(--muted){% endif %}">
       {% if is_pos %}+{% endif %}{{ "%.2f"|format(market.daily_change) }} ({% if is_pos %}+{% endif %}{{ "%.2f"|format(market.daily_change_percent) }}%)
     </div>
     {% endif %}
     <div class="muted" style="font-size:13px;margin-top:4px">
-      {{ quote_label or "Quote from provider" }}{% if as_of %} · {{ as_of }}{% endif %}
+      {{ quote_label or ("Latest close" if (market and market.market_status == "HISTORY_CLOSE_FALLBACK") else "Quote from provider") }}{% if as_of %} · {{ as_of }}{% elif market and market.as_of %} · {{ market.as_of }}{% endif %}
     </div>
     {% else %}
     <div class="price" style="font-size:56px;font-weight:700;letter-spacing:-0.04em;line-height:1">—</div>
