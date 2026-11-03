@@ -27,7 +27,10 @@
       {% include "partials/identity_dossier.html" %}
       {% include "partials/market_chart.html" %}
       {% include "partials/market_snapshot.html" %}
-      {% include "partials/signal_score.html" %}
+      <section class="ga" style="margin-bottom:24px">
+        {% include "partials/signal_score.html" %}
+        {% include "partials/fundamentals.html" %}
+      </section>
     {% else %}
       {% include "partials/research_status.html" %}
     {% endif %}

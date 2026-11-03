@@ -10,7 +10,7 @@
   {% set conf_num = (conf_val|string).split("/")[0]|int if conf_val else 0 %}
   {% set conf_text = "High" if conf_num >= 70 else ("Moderate" if conf_num >= 40 else "Low") %}
 
-<div class="card pad" id="signal-card" style="margin-bottom:24px">
+<div class="card pad" id="signal-card">
   <p class="eyebrow">Technical signal · deterministic</p>
   <div style="display:flex;align-items:center;gap:28px;margin-top:14px;flex-wrap:wrap">
     <div style="position:relative;width:130px;height:130px;flex:none">
@@ -59,7 +59,7 @@
 </div>
 
 {% else %}
-<div class="card pad" id="signal-card" style="margin-bottom:24px">
+<div class="card pad" id="signal-card">
   <p class="eyebrow">Technical signal · deterministic</p>
   <div style="padding:28px 0;text-align:center" class="muted">
     <p style="font-size:15px;margin:0">Signal unavailable until sufficient deterministic history is sourced.</p>

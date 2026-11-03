@@ -1,0 +1,36 @@
+{# Fundamentals · Reported Financial Health & Expandable Statements #}
+{% if fundamentals and fundamentals.available %}
+<div id="fundamentals" class="card pad">
+  <p class="eyebrow">Fundamentals · reported</p>
+
+  <div class="m3" style="margin-top:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+    {% for f in fundamentals.primary %}
+    <div class="metric" style="background:var(--fill);border-radius:16px;padding:18px">
+      <span class="muted" style="font-size:13px;display:block;margin-bottom:4px">{{ f.label }}</span>
+      <b style="font-size:18px;letter-spacing:-0.02em;color:var(--text)">{{ f.value }}</b>
+    </div>
+    {% endfor %}
+  </div>
+
+  <details style="margin-top:16px;cursor:pointer">
+    <summary style="font-weight:600;font-size:14px;color:var(--text)">
+      Financial statements{% if fundamentals.fiscal_period_end %} · period ending {{ fundamentals.fiscal_period_end }}{% endif %}
+    </summary>
+    <div style="margin-top:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+      {% for s in fundamentals.statements %}
+      <div class="metric" style="background:var(--fill);border-radius:16px;padding:14px 18px">
+        <span class="muted" style="font-size:12px;display:block;margin-bottom:4px">{{ s.label }}</span>
+        <b style="font-size:16px;letter-spacing:-0.02em;color:var(--text)">{{ s.value }}</b>
+      </div>
+      {% endfor %}
+    </div>
+  </details>
+</div>
+{% else %}
+<div id="fundamentals" class="card pad">
+  <p class="eyebrow">Fundamentals · reported</p>
+  <div style="padding:28px 0;text-align:center" class="muted">
+    <p style="font-size:15px;margin:0">Reported fundamentals are unavailable for this company record.</p>
+  </div>
+</div>
+{% endif %}
