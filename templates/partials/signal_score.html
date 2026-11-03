@@ -1,0 +1,68 @@
+{# Technical Signal · Deterministic 0-100 Score Ring & Drivers #}
+{% if signal and signal.score is not none and signal.score != "—" %}
+  {% set raw_score = (signal.score|string).split("/")[0]|int %}
+  {% set score = raw_score if (raw_score is defined and raw_score >= 0) else 50 %}
+  {% set dash = (score * 339 / 100)|round|int %}
+  {% set cat = (signal.label if signal.label is defined else signal.signal)|default("NEUTRAL")|upper %}
+  {% set is_bull = (cat == "BULLISH") %}
+  {% set is_bear = (cat == "BEARISH") %}
+  {% set conf_val = signal.confidence if signal.confidence is defined else 0 %}
+  {% set conf_num = (conf_val|string).split("/")[0]|int if conf_val else 0 %}
+  {% set conf_text = "High" if conf_num >= 70 else ("Moderate" if conf_num >= 40 else "Low") %}
+
+<div class="card pad" id="signal-card" style="margin-bottom:24px">
+  <p class="eyebrow">Technical signal · deterministic</p>
+  <div style="display:flex;align-items:center;gap:28px;margin-top:14px;flex-wrap:wrap">
+    <div style="position:relative;width:130px;height:130px;flex:none">
+      <svg width="130" height="130" viewBox="0 0 130 130" aria-hidden="true">
+        <circle cx="65" cy="65" r="54" fill="none" style="stroke:var(--track)" stroke-width="12"></circle>
+        <circle cx="65" cy="65" r="54" fill="none" style="stroke:{% if is_bull %}var(--up){% elif is_bear %}var(--down){% else %}var(--muted){% endif %}" stroke-width="12" stroke-linecap="round" stroke-dasharray="{{ dash }} 339" transform="rotate(-90 65 65)"></circle>
+      </svg>
+      <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+        <b style="font-size:36px;letter-spacing:-0.03em;color:var(--text)">{{ score }}</b>
+        <span class="muted" style="font-size:12px">of 100</span>
+      </div>
+    </div>
+
+    <div>
+      <div style="font-size:26px;font-weight:700;color:{% if is_bull %}var(--upt){% elif is_bear %}var(--down){% else %}var(--text){% endif %};letter-spacing:-0.02em">
+        {{ cat|capitalize }}
+      </div>
+      <div class="muted" style="font-size:14px;margin-top:4px">
+        Confidence: {{ conf_text }}
+      </div>
+      <div style="display:flex;gap:3px;margin-top:14px;width:150px" aria-hidden="true">
+        <span style="flex:1;height:6px;border-radius:3px;background:{% if is_bear %}var(--down){% else %}var(--track){% endif %}"></span>
+        <span style="flex:1;height:6px;border-radius:3px;background:{% if not is_bull and not is_bear %}var(--muted){% else %}var(--track){% endif %}"></span>
+        <span style="flex:1;height:6px;border-radius:3px;background:{% if is_bull %}var(--up){% else %}var(--track){% endif %}"></span>
+      </div>
+      <div class="muted" style="display:flex;justify-content:space-between;font-size:11px;margin-top:4px;width:150px">
+        <span>Bearish</span><span>Neutral</span><span>Bullish</span>
+      </div>
+    </div>
+  </div>
+
+  {% if signal.factors %}
+  <ul style="margin:20px 0 0;padding-left:18px;font-size:15px;line-height:1.7;color:var(--text)">
+    {% for f in signal.factors %}
+    <li>{{ f }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+
+  <details style="margin-top:14px;cursor:pointer">
+    <summary style="font-weight:600;font-size:14px;color:var(--text)">How this score is calculated</summary>
+    <p class="muted" style="font-size:14px;line-height:1.6;margin:10px 0 0">
+      {{ signal.methodology or signal.explanation or "The score combines moving-average alignment, momentum and volatility. It is computed by fixed rules, not by AI, so the same data always gives the same score." }}
+    </p>
+  </details>
+</div>
+
+{% else %}
+<div class="card pad" id="signal-card" style="margin-bottom:24px">
+  <p class="eyebrow">Technical signal · deterministic</p>
+  <div style="padding:28px 0;text-align:center" class="muted">
+    <p style="font-size:15px;margin:0">Signal unavailable until sufficient deterministic history is sourced.</p>
+  </div>
+</div>
+{% endif %}

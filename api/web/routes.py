@@ -118,6 +118,7 @@ def register_web_routes(
                             "brief": brief,
                             "metrics": brief.metrics,
                             "quote_label": brief.quoteLabel,
+                            "signal": brief.signal,
                             "chart_points": brief.priceHistory.daily,
                             "chart_data_json": json.dumps(chart_payload),
                             "default_period": brief.priceHistory.defaultPeriod,

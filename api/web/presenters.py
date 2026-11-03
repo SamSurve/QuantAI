@@ -342,8 +342,12 @@ def market_brief_from_research(research: TypedResearchResponse) -> MarketBrief:
 
     # Signal
     sig_model = None
-    if intelligence and intelligence.market_signal:
-        sig = intelligence.market_signal
+    sig = intelligence.market_signal if intelligence else None
+    if sig is None and raw_daily and len([p for p in raw_daily if p.close is not None]) >= 21:
+        from api.market_intelligence_services import calculate_market_signal
+        sig = calculate_market_signal(raw_daily)
+
+    if sig:
         score_str = f"{sig.score}/100" if sig.score is not None else "—"
         conf_str = f"{sig.confidence}/100" if sig.confidence is not None else "—"
         sig_model = MarketBriefSignal(
