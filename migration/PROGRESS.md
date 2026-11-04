@@ -56,7 +56,7 @@ Stop after Part 15.
 ## BATCH 04 — Parts 16–20
 
 - [x] PART 16 — Sourced news feed
-- [ ] PART 17 — Events radar
+- [x] PART 17 — Events radar
 - [ ] PART 18 — Evidence appendix
 - [ ] PART 19 — Markdown, AI brief and math rendering
 - [ ] PART 20 — AgentOS chat client and error mapping

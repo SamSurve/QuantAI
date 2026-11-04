@@ -18,6 +18,7 @@ from api.web.company_profile import (
 )
 from api.web.fundamentals import format_financial_health
 from api.web.news import process_news_feed
+from api.web.events import process_events_radar
 from api.web.presenters import market_brief_from_research
 from api.web.research import classify_research_error, orchestrate_dual_research
 
@@ -122,6 +123,8 @@ def register_web_routes(
                     competitors_data = format_competitor_evidence(comp)
                     news_unavail = (result.status.news == "unavailable") if (result and result.status) else False
                     news_feed = process_news_feed(brief.news, is_unavailable=news_unavail)
+                    events_unavail = (result.status.events == "unavailable") if (result and result.status) else False
+                    events_radar = process_events_radar(brief.events, is_unavailable=events_unavail)
 
                     chart_payload = {
                         "intraday": [p.model_dump() for p in brief.priceHistory.intraday],
@@ -144,6 +147,7 @@ def register_web_routes(
                             "governance": governance_data,
                             "competitors": competitors_data,
                             "news_feed": news_feed,
+                            "events_radar": events_radar,
                             "chart_points": brief.priceHistory.daily,
                             "chart_data_json": json.dumps(chart_payload),
                             "default_period": brief.priceHistory.defaultPeriod,
