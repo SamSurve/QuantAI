@@ -20,6 +20,7 @@ from api.web.fundamentals import format_financial_health
 from api.web.news import process_news_feed
 from api.web.events import process_events_radar
 from api.web.evidence import process_evidence_appendix
+from api.web.analysis import process_analysis_brief
 from api.web.presenters import market_brief_from_research
 from api.web.research import classify_research_error, orchestrate_dual_research
 
@@ -127,6 +128,14 @@ def register_web_routes(
                     events_unavail = (result.status.events == "unavailable") if (result and result.status) else False
                     events_radar = process_events_radar(brief.events, is_unavailable=events_unavail)
 
+                    is_ai_unavail = (result.status.ai == "unavailable") if (result and result.status) else False
+                    ai_text = brief.analysis if (brief and brief.analysis) else None
+                    analysis_brief = process_analysis_brief(
+                        ai_text,
+                        is_unavailable=is_ai_unavail,
+                        notice=brief.aiInterpretationNotice if brief else None,
+                    )
+
                     freshness_src = None
                     if result and result.market_intelligence and result.market_intelligence.freshness:
                         freshness_src = result.market_intelligence.freshness
@@ -158,6 +167,7 @@ def register_web_routes(
                             "quote_label": brief.quoteLabel,
                             "signal": brief.signal,
                             "fundamentals": fundamentals_data,
+                            "analysis_brief": analysis_brief,
                             "profile": profile_data,
                             "governance": governance_data,
                             "competitors": competitors_data,

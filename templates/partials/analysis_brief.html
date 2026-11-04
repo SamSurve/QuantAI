@@ -1,0 +1,28 @@
+{# AI Research Brief · Server-rendered Markdown & MathML #}
+<section id="analysis" class="card pad" style="margin-bottom:24px;padding:40px">
+  <div class="row" style="margin-bottom:6px;flex-wrap:wrap">
+    <p class="eyebrow" style="margin:0">AI research brief</p>
+    <span class="b lo">Interpretation · not evidence</span>
+  </div>
+  {% if analysis_brief and analysis_brief.has_analysis %}
+    {% if analysis_brief.lead %}
+      <p style="font-size:30px;line-height:1.25;font-weight:600;letter-spacing:-0.025em;margin:12px 0 28px;max-width:860px">
+        {{ analysis_brief.lead }}
+      </p>
+    {% endif %}
+    <div class="agent-markdown" style="font-size:15px;line-height:1.6">
+      {{ analysis_brief.rendered_html | safe }}
+    </div>
+  {% elif analysis_brief and analysis_brief.is_unavailable %}
+    <div style="margin-top:16px;padding:16px;border-left:3px solid var(--muted);background:var(--fill);border-radius:6px">
+      <b style="font-size:14px;color:var(--text);display:block;margin-bottom:4px">Interpretation notice</b>
+      <p style="font-size:14px;margin:0;color:var(--text)">{{ analysis_brief.unavailable_notice }}</p>
+      <p class="muted" style="font-size:13px;margin:8px 0 0">The sourced market record remains visible above and below this section.</p>
+    </div>
+  {% else %}
+    <div style="margin-top:16px;padding:16px;border-left:3px solid var(--muted);background:var(--fill);border-radius:6px">
+      <p class="muted" style="font-size:14px;margin:0">Optional AI interpretation is not enabled for this view.</p>
+      <p class="muted" style="font-size:13px;margin:8px 0 0">The sourced market record remains visible above and below this section.</p>
+    </div>
+  {% endif %}
+</section>
