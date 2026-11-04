@@ -28,6 +28,7 @@ from .research_orchestrator import AnalysisSynthesisService, ResearchOrchestrato
 from .research_protection import ResearchConcurrencyGuard, SlidingWindowRateLimiter
 from .research_schemas import ErrorCategory, ErrorResponse, ResearchRequest, ResearchResponse
 from .web.routes import prefers_html_over_json, register_web_routes, render_not_found
+from .web.chat import chat_router
 
 STATIC_DIR = Path(__file__).resolve().parents[1] / "static"
 
@@ -187,6 +188,7 @@ def prefix_stripped_health() -> dict[str, Any]:
 
 # Register root content negotiation and web routes
 register_web_routes(app, health_payload, research_orchestrator=research_orchestrator)
+app.include_router(chat_router)
 
 
 @app.post("/api/research", response_model=ResearchResponse, responses={

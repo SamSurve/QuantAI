@@ -1,0 +1,50 @@
+{# AgentOS Chat Drawer & Research Desk Trigger #}
+<!-- Floating trigger button matching Main.dc.html:193 -->
+<button id="chat-toggle" type="button" aria-expanded="false" aria-controls="chat-drawer"
+  style="position:fixed;right:32px;bottom:32px;border:0;background:var(--text);color:var(--bg);font-size:15px;font-weight:600;font-family:inherit;border-radius:999px;padding:16px 26px;box-shadow:0 12px 32px rgba(0,0,0,.25);cursor:pointer;z-index:90;transition:transform .15s ease,box-shadow .15s ease">
+  Ask the research desk
+</button>
+
+<!-- Slide-out Chat Drawer -->
+<div id="chat-drawer" class="chat-drawer" aria-hidden="true" role="dialog" aria-label="Research Desk Chat"
+  style="display:none;position:fixed;right:24px;bottom:24px;width:min(440px, calc(100vw - 32px));height:min(600px, calc(100vh - 48px));background:var(--card);border:1px solid var(--line);border-radius:24px;box-shadow:0 24px 64px rgba(0,0,0,.28);z-index:100;flex-direction:column;overflow:hidden">
+  
+  <!-- Drawer Header -->
+  <div class="row" style="padding:16px 20px;border-bottom:1px solid var(--line);background:var(--fill)">
+    <div style="min-width:0">
+      <b style="font-size:15px;color:var(--text);display:block">Research Desk</b>
+      <span class="muted" style="font-size:12px">Groq Finance Agent · Sourced AI</span>
+    </div>
+    <div class="row" style="gap:8px">
+      <span id="chat-turn-counter" class="b lo" style="font-size:11px;padding:2px 8px">0 turns</span>
+      <button id="chat-close" type="button" aria-label="Close chat"
+        style="background:0 0;border:0;cursor:pointer;color:var(--muted);font-size:18px;line-height:1;padding:4px 8px;border-radius:6px">
+        ✕
+      </button>
+    </div>
+  </div>
+
+  <!-- Quick prompts row -->
+  <div id="chat-pills" style="padding:8px 16px;border-bottom:1px solid var(--line);display:flex;gap:6px;overflow-x:auto;white-space:nowrap;background:var(--card)">
+    <button type="button" class="chat-pill chip" data-prompt="Summarize the key catalysts and risks" style="padding:4px 10px;font-size:12px">Catalysts &amp; risks</button>
+    <button type="button" class="chat-pill chip" data-prompt="Explain the operating margin trend" style="padding:4px 10px;font-size:12px">Operating margin</button>
+    <button type="button" class="chat-pill chip" data-prompt="How do the reported fundamentals compare to peers?" style="padding:4px 10px;font-size:12px">Peer context</button>
+  </div>
+
+  <!-- Messages Container -->
+  <div id="chat-messages" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px">
+    <div class="chat-msg chat-msg--assistant" style="align-self:flex-start;max-width:92%;background:var(--fill);border-radius:14px;padding:12px 14px;font-size:14px;line-height:1.5;color:var(--text)">
+      <p style="margin:0">Hello! I am the QuantAI finance research assistant. You can ask questions about the returned deterministic evidence, financial statements, or market context.</p>
+    </div>
+  </div>
+
+  <!-- Input Form -->
+  <form id="chat-form" style="padding:12px 16px;border-top:1px solid var(--line);background:var(--fill);display:flex;gap:8px;align-items:center">
+    <input id="chat-input" type="text" placeholder="Ask a financial question..." autocomplete="off"
+      style="flex:1;border:1px solid var(--line);background:var(--card);color:var(--text);font-family:inherit;font-size:14px;border-radius:999px;padding:9px 16px;outline:none" />
+    <button id="chat-submit" type="submit"
+      style="background:var(--text);color:var(--bg);border:0;border-radius:999px;padding:9px 18px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer">
+      Send
+    </button>
+  </form>
+</div>
