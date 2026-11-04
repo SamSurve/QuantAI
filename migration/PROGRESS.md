@@ -57,7 +57,7 @@ Stop after Part 15.
 
 - [x] PART 16 — Sourced news feed
 - [x] PART 17 — Events radar
-- [ ] PART 18 — Evidence appendix
+- [x] PART 18 — Evidence appendix
 - [ ] PART 19 — Markdown, AI brief and math rendering
 - [ ] PART 20 — AgentOS chat client and error mapping
 

@@ -1,0 +1,55 @@
+{# Evidence Appendix · Provenance Ledger & Freshness Disclosure #}
+{% if evidence_appendix and evidence_appendix.has_content %}
+<section class="card pad" id="appendix" style="margin-bottom:24px">
+  <div class="row" style="flex-wrap:wrap">
+    <div>
+      <b style="font-size:17px">Evidence appendix</b>
+      <div class="muted" style="font-size:14px;margin-top:4px">Every section shows its source, timestamp and freshness.</div>
+    </div>
+  </div>
+  <details style="margin-top:14px">
+    <summary style="cursor:pointer;font-weight:600;font-size:14px;color:var(--text);user-select:none">Show sources and freshness</summary>
+    <div style="margin-top:12px">
+      {% for v in evidence_appendix.freshness %}
+      <div class="row" style="padding:12px 0;border-top:1px solid var(--line);font-size:14px">
+        <span>
+          <b>{{ v.label }}</b><br>
+          <span class="muted" style="font-size:13px">{{ v.source_description }}</span>
+        </span>
+        <span class="{{ v.badge_class }}">{{ v.state_display }}</span>
+      </div>
+      {% endfor %}
+
+      {% if evidence_appendix.sources %}
+      <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--line)">
+        <b style="font-size:14px;display:block;margin-bottom:8px">Source records</b>
+        {% for s in evidence_appendix.sources %}
+        <div class="row" style="padding:10px 0;{% if not loop.last %}border-bottom:1px solid var(--line);{% endif %}font-size:13px">
+          <div>
+            <b style="color:var(--text)">{{ s.source }}</b>
+            <div class="muted" style="font-size:12px;margin-top:2px">{{ s.data_type }} · {{ s.retrieved_at }}</div>
+          </div>
+          {% if s.url %}
+          <a href="{{ s.url }}" target="_blank" rel="noopener noreferrer" style="color:var(--text);font-size:13px;text-decoration:none;display:inline-flex;align-items:center;gap:4px">
+            Open source ↗
+          </a>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% if evidence_appendix.warnings %}
+      <div style="margin-top:20px;padding:12px 16px;border-left:3px solid var(--warn);background:var(--warnbg);border-radius:6px">
+        <b style="font-size:13px;color:var(--warn);display:block;margin-bottom:4px">Research notes</b>
+        <ul style="margin:0;padding-left:16px;font-size:13px;color:var(--text)">
+          {% for w in evidence_appendix.warnings %}
+          <li style="margin-bottom:4px">{{ w.message }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+    </div>
+  </details>
+</section>
+{% endif %}
