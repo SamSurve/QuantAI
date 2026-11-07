@@ -64,7 +64,11 @@
         var symbol = chip.getAttribute('data-quick-search');
         if (symbol) {
           input.value = symbol.trim();
-          form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+          if (typeof form.requestSubmit === 'function') {
+            form.requestSubmit();
+          } else {
+            form.submit();
+          }
         }
       }
     });

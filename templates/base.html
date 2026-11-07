@@ -45,10 +45,6 @@
       </header>
 
       {% block content %}{% endblock %}
-
-      <button type="button" style="position:fixed;right:32px;bottom:32px;border:0;background:var(--text);color:var(--bg);font-size:15px;font-weight:600;font-family:inherit;border-radius:999px;padding:16px 26px;box-shadow:0 12px 32px rgba(0,0,0,.25);cursor:pointer">
-        Ask the research desk
-      </button>
     </div>
     {% include "partials/startup_reveal.html" %}
     <div id="toast-container" aria-live="polite" style="position:fixed;bottom:24px;left:24px;z-index:9990;display:flex;flex-direction:column;gap:8px;pointer-events:none"></div>
