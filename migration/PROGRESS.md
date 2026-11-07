@@ -72,13 +72,13 @@ DAY 2 STATUS: COMPLETE
 
 ## BATCH 05 — Parts 21–25
 
-- [ ] PART 21 — Chat continuity and quick prompts
+- [x] PART 21 — Chat continuity and quick prompts
 - [ ] PART 22 — Activity, connection settings and SSRF protection
 - [ ] PART 23 — Startup, responsive application and error recovery
 - [ ] PART 24 — API security and request protection
 - [ ] PART 25 — TTL cache and provider failover
 
-Batch status: NOT STARTED
+Batch status: IN PROGRESS
 
 Stop after Part 25.
 
@@ -103,8 +103,8 @@ DAY 3 STATUS: NOT STARTED
 | Metric | Target |
 |---|---:|
 | Total parts | 30 |
-| Completed parts | 20 |
-| Remaining parts | 10 |
+| Completed parts | 21 |
+| Remaining parts | 9 |
 | Required commits | 30 |
 | Required pushed commits | 30 |
 | Days | 3 |

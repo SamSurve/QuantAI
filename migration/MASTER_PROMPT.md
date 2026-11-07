@@ -46,6 +46,71 @@ You must follow the approved plan and batch prompts literally.
 
 
 
+## PERMANENT EXECUTION GOVERNANCE (PARTS 21-30)
+
+Add the following five permanent rules to the existing global executor instructions. These rules apply to every remaining migration part and batch (Parts 21-30).
+
+Preserve all existing instructions. Do not replace, weaken, remove, or contradict existing rules.
+
+**Precedence clarification:** The PERMANENT EXECUTION GOVERNANCE section takes precedence over any conflicting instruction elsewhere in MASTER_PROMPT.md that permits automatic progression without owner authorization. After completing each part, stop and wait for explicit owner authorization before starting the next part.
+
+### RULE 1 - OWNER AUTHORIZATION BEFORE IMPLEMENTATION
+
+- Preflight and self-review must happen before implementation.
+- Print a complete GATE REPORT.
+- Wait for explicit owner authorization before modifying application code or tests.
+- A passing gate does not automatically authorize implementation.
+- Never interpret silence, an uploaded report, or a prior batch authorization as permission to start the next part.
+- If authorization is unclear, stop.
+
+### RULE 2 - STRICT GIT OPERATION RESTRICTION
+
+- `migration/push_part.py` is the only authorized Git-operation interface.
+- Never execute direct Git commands, including read-only commands.
+- Never use GitHub connectors, IDE Git integration or alternative Git tools.
+- Do not inspect Git through another interface to work around a restriction.
+- If `push_part.py` cannot verify a required condition, stop and report the limitation.
+- Never push or commit without owner authorization where required.
+
+### RULE 3 - STRICT PART FILE SCOPE
+
+- Before implementation, identify every authorized file for the current part.
+- Do not modify unrelated production files, tests, configuration, documentation or dependencies.
+- If a defect is discovered outside the authorized file list, document it and request owner approval.
+- Never silently include unrelated fixes in a part commit.
+- Review the complete changed-file inventory before shipping.
+- If unrelated changes are present, stop.
+
+### RULE 4 - TESTS MUST PROVE REAL BEHAVIOR
+
+- Write focused tests before implementation.
+- Demonstrate that each new test fails for the intended reason before making the fix.
+- A successful HTTP response alone does not prove correct business behavior.
+- Test real contract behavior, state transitions, persistence, ordering, error handling and edge cases as applicable.
+- Test session continuity using the actual shared session identifier across multiple turns.
+- Preserve original regression assertions.
+- Never weaken tests, suppress failures or use fixtures that bypass the behavior being tested.
+- Separate unit, integration, browser and regression evidence.
+- Report exact test counts and failure output.
+
+### RULE 5 - EVIDENCE-BASED VERIFICATION
+
+Never claim something is verified unless actual evidence exists.
+
+- API parity requires comparison of actual route, method, headers, status, payload and error behavior.
+- Browser accessibility requires real keyboard and focus testing.
+- Visual parity requires actual browser `getComputedStyle()` measurements.
+- Responsive verification requires independent desktop/mobile and light/dark checks.
+- Screenshot capture and screenshot review must be reported separately.
+- Network behavior requires actual request counts and request identification.
+- File integrity requires cryptographic hashes when hash verification is claimed.
+- Test success requires actual completed test output.
+- Clearly distinguish VERIFIED, FAILED, BLOCKED, ASSUMPTION and UNVERIFIED.
+
+Never turn an assumption into a PASS.
+
+
+
 \---
 
 

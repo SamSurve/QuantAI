@@ -52,6 +52,7 @@
       drawer.setAttribute('aria-hidden', 'true');
       toggleBtn.setAttribute('aria-expanded', 'false');
       toggleBtn.style.display = 'block';
+      if (toggleBtn) toggleBtn.focus();
     }
   }
 
@@ -201,6 +202,12 @@
       setDrawerOpen(false);
     });
   }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && drawer && drawer.style.display !== 'none') {
+      setDrawerOpen(false);
+    }
+  });
 
   if (form) {
     form.addEventListener('submit', function (e) {

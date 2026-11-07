@@ -6,6 +6,7 @@ import datetime
 import math
 from typing import Any, cast
 
+from api.research_schemas import MarketSnapshot
 from api.web.contracts import (
     BriefNewsItem,
     ChartPoint,
