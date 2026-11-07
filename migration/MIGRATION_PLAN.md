@@ -1083,4 +1083,196 @@ After Part 25 only:
 3. Verify all five part pushes succeeded through `migration/push_part.py` and each part has one part-specific commit.
 4. Complete the six-section final report required by `BATCH_05.md`.
 5. Write the end-of-batch retrospective in that final report: what went wrong, what was corrected, and which permanent rule should be added. Do not create a separate retrospective document.
-6. Stop. Do not start Part 26 or BATCH_06.
+6. Stop. Do not start Part 26 or BATCH_06 without user resume command.
+
+---
+
+# BATCH 06 — PARTS 26–30 (DAY 3 FINAL RELEASE)
+
+## Cross-part execution and protection rules — Parts 26–30
+
+1. Execute parts strictly in numerical order: Part 26 -> Part 27 -> Part 28 -> Part 29 -> Part 30.
+2. Atomic single-commit pushes strictly through `migration/push_part.py`.
+3. Do not modify the protected baseline test suites `tests/test_production_readiness.py` and `tests/test_provider_failover.py`.
+4. Run full pytest suite and Ruff checks before every push.
+5. Update `migration/PROGRESS.md` as part of each commit.
+
+---
+
+# PART 26 — LEGACY MARKDOWN PARSER
+
+**Goal:** Port the conversational AgentOS markdown table and brief parser from `client/src/lib/market.ts` into pure Python to support parsing conversational research outputs into typed `MarketBrief` structures.
+
+**Original files to read:**
+- `client/src/lib/market.ts` (lines 57–220: `cleanCell`, `parseTables`, `findTableValue`, `extractFallbackValue`, `findValue`, `displayValue`, `numberFromCell`, `extractChart`, `extractNews`, `toneFor`, `parseMarketBrief`, `emptyMarketBrief`).
+
+**Files to create or update:**
+- `api/web/legacy_parser.py`
+- `tests/test_legacy_parser.py`
+- `migration/PROGRESS.md`
+
+**Acceptance criteria:**
+1. Clean cell text: strip HTML tags, bold markers (`**`), backticks, and whitespace.
+2. Markdown table parsing: parse multi-column markdown tables, header lines, and separator rows (`|---|---|`).
+3. Fuzzy metric lookup: search table headers and row labels for terms matching metric aliases (`market cap`, `p/e`, `52 week high`, `52 week low`, `volume`, `dividend yield`).
+4. Fallback line extraction: scan markdown body text for currency / percentage / multiplier patterns when table cells are absent.
+5. Chart extraction: parse date/time and price/close columns into ordered numeric chart points.
+6. News extraction: parse bulleted or numbered news items, strip markdown links (`[text](url)` -> `text`).
+7. Metric tone calculation: determine positive (`+`, `up`, `gain`), negative (`-`, `down`, `loss`), or neutral tone.
+8. Full `parse_market_brief(markdown)` function returning structured `MarketBrief` view model matching TypeScript parity.
+9. `empty_market_brief()` fallback structure.
+
+**Validation commands:**
+```powershell
+.\.venv\Scripts\python.exe -m pytest tests/test_legacy_parser.py -q
+.\.venv\Scripts\python.exe -m pytest -q
+.\.venv\Scripts\python.exe -m ruff check .
+```
+
+**Commit:**
+```powershell
+.\.venv\Scripts\python.exe migration\push_part.py 26 "part 26: implement legacy markdown parser"
+```
+
+---
+
+# PART 27 — DEVELOPER TELEMETRY WITH STRICT GATING
+
+**Goal:** Implement environment-gated developer telemetry that is strictly disabled by default and unconditionally disabled in production environments.
+
+**Original files to read:**
+- `migration/MASTER_PROMPT.md` (Section 18, Part 27 specification).
+- `api/index.py`.
+
+**Files to create or update:**
+- `api/web/telemetry.py`
+- `tests/test_developer_telemetry.py`
+- `migration/PROGRESS.md`
+
+**Acceptance criteria:**
+1. Telemetry is disabled by default when `QUANTAI_DEVTOOLS` is unset or set to any value other than `"1"`.
+2. `QUANTAI_DEVTOOLS=1` enables developer telemetry only in development environments.
+3. When `ENVIRONMENT=production`, `VERCEL_ENV=production`, or `NODE_ENV=production`, telemetry is strictly disabled regardless of `QUANTAI_DEVTOOLS`.
+4. When telemetry is disabled, recording functions are complete no-ops with zero network overhead.
+5. Telemetry records never capture secret credentials, API keys, authorization headers, or prompt templates.
+
+**Validation commands:**
+```powershell
+.\.venv\Scripts\python.exe -m pytest tests/test_developer_telemetry.py -q
+.\.venv\Scripts\python.exe -m pytest -q
+.\.venv\Scripts\python.exe -m ruff check .
+```
+
+**Commit:**
+```powershell
+.\.venv\Scripts\python.exe migration\push_part.py 27 "part 27: implement developer telemetry gating"
+```
+
+---
+
+# PART 28 — FIVE TYPESCRIPT REGRESSION MIGRATION INVENTORY
+
+**Goal:** Formally inventory, catalog, and verify the five completed Python regression suites that converted the original TypeScript regression cases.
+
+**Original files to read:**
+- `tests/test_typed_research_backend.py` (Phase 1–3 core typed research).
+- `tests/test_market_intelligence.py` (Phase 4 market intelligence).
+- `tests/test_company_deep_analysis.py` (Phase 5 company deep analysis).
+- `tests/test_company_comparison.py` (Phase 6 company comparison).
+- `tests/test_agentos_client_errors.py` (Part 20 AgentOS client errors).
+
+**Files to create or update:**
+- `tests/test_regression_inventory.py`
+- `migration/PROGRESS.md`
+
+**Acceptance criteria:**
+1. All five converted regression suites exist in `tests/`.
+2. Each converted suite executes independently with zero errors and exit code 0.
+3. Test assertions rigorously verify contract parity without weakening original bounds.
+4. Total parity coverage across all five converted regression suites is asserted.
+
+**Validation commands:**
+```powershell
+.\.venv\Scripts\python.exe -m pytest tests/test_regression_inventory.py -q
+.\.venv\Scripts\python.exe -m pytest -q
+.\.venv\Scripts\python.exe -m ruff check .
+```
+
+**Commit:**
+```powershell
+.\.venv\Scripts\python.exe migration\push_part.py 28 "part 28: inventory and verify converted regressions"
+```
+
+---
+
+# PART 29 — VERCEL AND SELF-HOSTED DEPLOYMENT
+
+**Goal:** Establish and verify the production deployment configuration for both Vercel serverless functions and self-hosted container/uvicorn environments.
+
+**Original files to read:**
+- `E:\Quant-AI\vercel.json`
+- `E:\Quant-AI\VERCEL_DEPLOYMENT.md`
+- `tests/test_production_readiness.py`
+
+**Files to create or update:**
+- `vercel.json`
+- `VERCEL_DEPLOYMENT.md`
+- `tests/test_deployment_config.py`
+- `migration/PROGRESS.md`
+
+**Acceptance criteria:**
+1. `vercel.json` configured for FastAPI:
+   - `maxDuration: 60`
+   - `includeFiles`: `templates/**`, `static/**`, `api/**`
+   - `headers`: `Cache-Control: no-store` for `/api/(.*)`
+2. `VERCEL_DEPLOYMENT.md` documents all required production environment variables (`GROQ_API_KEY_PRIMARY`, `GROQ_API_KEY_SECONDARY`, `OPENROUTER_API_KEY`, models, etc.) and deployment procedures.
+3. Clear documentation of what requires real Vercel deployment to observe (e.g. edge CDN behavior).
+4. Self-hosted uvicorn execution verified.
+
+**Validation commands:**
+```powershell
+.\.venv\Scripts\python.exe -m pytest tests/test_deployment_config.py -q
+.\.venv\Scripts\python.exe -m pytest -q
+.\.venv\Scripts\python.exe -m ruff check .
+```
+
+**Commit:**
+```powershell
+.\.venv\Scripts\python.exe migration\push_part.py 29 "part 29: configure Vercel and self-hosted deployment"
+```
+
+---
+
+# PART 30 — FULL PARITY AND RELEASE AUDIT
+
+**Goal:** Complete the final comprehensive audit covering all 21 user-facing UI features, all seven infrastructure capabilities, and full release verification.
+
+**Original files to read:**
+- `migration/MIGRATION_PLAN.md` (Sections 1–9)
+- `migration/MASTER_PROMPT.md` (Section 19 UI features, Section 20 infrastructure)
+
+**Files to create or update:**
+- `tests/test_final_release_audit.py`
+- `migration/PROGRESS.md`
+
+**Acceptance criteria:**
+1. All 21 user-facing UI features verified:
+   - Header, theme switcher, search input, status banner, market overview, price chart, time periods, technical signals, fundamentals, company profile, governance, competitor evidence, news feed, events radar, evidence appendix, research brief, MathML rendering, chat desk, recent activity drawer, connection health indicator, endpoint settings modal.
+2. All seven internal/infrastructure capabilities verified:
+   - Typed contract parity, parallel data fetching, sliding-window rate limiting, concurrency guard, sequential provider failover, TTL caching with single-flight coalescing, SSRF protection.
+3. Protected baseline test hashes confirmed identical to commit `2862d10`.
+4. Final test suite: 100% passed, 0 failures, 0 errors.
+5. Working tree clean, all 30 parts pushed to `origin/main`.
+6. Complete final migration audit report.
+
+**Validation commands:**
+```powershell
+.\.venv\Scripts\python.exe -m pytest tests/test_final_release_audit.py -q
+.\.venv\Scripts\python.exe -m pytest -q
+.\.venv\Scripts\python.exe -m ruff check .
+```
+
+**Commit:**
+```powershell
+.\.venv\Scripts\python.exe migration\push_part.py 30 "part 30: complete full parity and release audit"
+```

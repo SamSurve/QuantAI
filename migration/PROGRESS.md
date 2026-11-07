@@ -84,13 +84,13 @@ Stop after Part 25.
 
 ## BATCH 06 — Parts 26–30
 
-- [ ] PART 26 — Legacy Markdown parser
+- [x] PART 26 — Legacy Markdown parser
 - [ ] PART 27 — Developer telemetry with strict gating
 - [ ] PART 28 — Five TypeScript regression migration inventory
 - [ ] PART 29 — Vercel and self-hosted deployment
 - [ ] PART 30 — Full parity and release audit
 
-Batch status: NOT STARTED
+Batch status: IN PROGRESS
 
 Stop after Part 30.
 
@@ -103,8 +103,8 @@ DAY 3 STATUS: NOT STARTED
 | Metric | Target |
 |---|---:|
 | Total parts | 30 |
-| Completed parts | 25 |
-| Remaining parts | 5 |
+| Completed parts | 26 |
+| Remaining parts | 4 |
 | Required commits | 30 |
 | Required pushed commits | 30 |
 | Days | 3 |
