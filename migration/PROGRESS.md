@@ -87,7 +87,7 @@ Stop after Part 25.
 - [x] PART 26 — Legacy Markdown parser
 - [x] PART 27 — Developer telemetry with strict gating
 - [x] PART 28 — Research regressions and push wrapper upgrade
-- [ ] PART 29 — Company deep analysis and comparison regressions
+- [x] PART 29 — Company deep analysis and comparison regressions
 - [ ] PART 30 — AgentOS errors and unified regression inventory
 - [ ] PART 31 — Vercel deployment configuration and ASGI routing
 - [ ] PART 32 — Local Uvicorn runtime and environment documentation
@@ -109,8 +109,8 @@ DAY 3 STATUS: IN PROGRESS
 | Metric | Target |
 |---|---:|
 | Total parts | 36 |
-| Completed parts | 28 |
-| Remaining parts | 8 |
+| Completed parts | 29 |
+| Remaining parts | 7 |
 | Required commits | 36 |
 | Required pushed commits | 36 |
 | Days | 3 |
