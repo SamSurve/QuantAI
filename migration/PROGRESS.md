@@ -82,19 +82,25 @@ Batch status: COMPLETE
 
 Stop after Part 25.
 
-## BATCH 06 — Parts 26–30
+## BATCH 06 — Parts 26–36
 
 - [x] PART 26 — Legacy Markdown parser
 - [x] PART 27 — Developer telemetry with strict gating
-- [ ] PART 28 — Five TypeScript regression migration inventory
-- [ ] PART 29 — Vercel and self-hosted deployment
-- [ ] PART 30 — Full parity and release audit
+- [x] PART 28 — Research regressions and push wrapper upgrade
+- [ ] PART 29 — Company deep analysis and comparison regressions
+- [ ] PART 30 — AgentOS errors and unified regression inventory
+- [ ] PART 31 — Vercel deployment configuration and ASGI routing
+- [ ] PART 32 — Local Uvicorn runtime and environment documentation
+- [ ] PART 33 — Vercel configuration verification and deployment honesty
+- [ ] PART 34 — All 21 UI features and Apple visual parity
+- [ ] PART 35 — Seven infrastructure and security capabilities
+- [ ] PART 36 — Final release audit and complete migration parity
 
 Batch status: IN PROGRESS
 
-Stop after Part 30.
+Stop after Part 36.
 
-DAY 3 STATUS: NOT STARTED
+DAY 3 STATUS: IN PROGRESS
 
 ---
 
@@ -102,14 +108,14 @@ DAY 3 STATUS: NOT STARTED
 
 | Metric | Target |
 |---|---:|
-| Total parts | 30 |
-| Completed parts | 27 |
-| Remaining parts | 3 |
-| Required commits | 30 |
-| Required pushed commits | 30 |
+| Total parts | 36 |
+| Completed parts | 28 |
+| Remaining parts | 8 |
+| Required commits | 36 |
+| Required pushed commits | 36 |
 | Days | 3 |
 | Batches | 6 |
-| Batch size | 5 |
+| Batch size | 5–11 |
 
 # Rules
 

@@ -5,6 +5,7 @@ Verifies that all original suites run directly with sys.executable and exit with
 
 from __future__ import annotations
 
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -29,11 +30,16 @@ def test_original_suite_subprocess(suite_relpath: str):
     suite_path = ROOT / suite_relpath
     assert suite_path.exists(), f"Suite file missing: {suite_relpath}"
 
+    env = dict(os.environ)
+    env["OPENBLAS_NUM_THREADS"] = "1"
+    env["OMP_NUM_THREADS"] = "1"
+
     result = subprocess.run(
         [sys.executable, str(suite_path)],
         cwd=str(ROOT),
         capture_output=True,
         text=True,
+        env=env,
     )
 
     assert result.returncode == 0, (

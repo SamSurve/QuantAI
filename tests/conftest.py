@@ -4,6 +4,10 @@ from __future__ import annotations
 
 import os
 import sys
+
+os.environ.setdefault("OPENBLAS_NUM_THREADS", "1")
+os.environ.setdefault("OMP_NUM_THREADS", "1")
+
 from pathlib import Path
 from typing import Generator
 from unittest.mock import patch

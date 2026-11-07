@@ -29,6 +29,7 @@ Safety:
 from __future__ import annotations
 
 import argparse
+import os
 import re
 import subprocess
 import sys
@@ -42,11 +43,11 @@ from pathlib import Path, PurePosixPath
 EXPECTED_REMOTE = "https://github.com/SamSurve/QuantAI.git"
 EXPECTED_BRANCH = "main"
 
-TOTAL_PARTS = 30
+TOTAL_PARTS = 36
 PROGRESS_FILE = "migration/PROGRESS.md"
 
-BATCH_ENDS = {5, 10, 15, 20, 25, 30}
-DAY_ENDS = {10, 20, 30}
+BATCH_ENDS = {5, 10, 15, 20, 25, 30, 36}
+DAY_ENDS = {10, 20, 30, 36}
 
 IGNORED_DIRECTORIES = {
     ".git",
@@ -132,6 +133,9 @@ def execute(
     """Execute commands without invoking a shell."""
 
     try:
+        env = dict(os.environ)
+        env["OPENBLAS_NUM_THREADS"] = "1"
+        env["OMP_NUM_THREADS"] = "1"
         return subprocess.run(
             command,
             cwd=str(cwd),
@@ -142,6 +146,7 @@ def execute(
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             check=False,
+            env=env,
         )
     except FileNotFoundError as exc:
         raise PushError(
@@ -186,7 +191,7 @@ def validate_arguments(
 ) -> None:
 
     if not 1 <= part_no <= TOTAL_PARTS:
-        raise PushError("part_no must be between 1 and 30.")
+        raise PushError(f"part_no must be between 1 and {TOTAL_PARTS}.")
 
     if "\n" in message or "\r" in message:
         raise PushError("Commit message must be a single line.")
@@ -760,7 +765,7 @@ def main() -> int:
     parser.add_argument(
         "part_no",
         type=int,
-        help="Part number, 1 through 30.",
+        help=f"Part number, 1 through {TOTAL_PARTS}.",
     )
 
     parser.add_argument(
