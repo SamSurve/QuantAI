@@ -76,9 +76,9 @@ DAY 2 STATUS: COMPLETE
 - [x] PART 22 — Activity, connection settings and SSRF protection
 - [x] PART 23 — Startup, responsive application and error recovery
 - [x] PART 24 — API security and request protection
-- [ ] PART 25 — TTL cache and provider failover
+- [x] PART 25 — TTL cache and provider failover
 
-Batch status: IN PROGRESS
+Batch status: COMPLETE
 
 Stop after Part 25.
 
@@ -103,8 +103,8 @@ DAY 3 STATUS: NOT STARTED
 | Metric | Target |
 |---|---:|
 | Total parts | 30 |
-| Completed parts | 24 |
-| Remaining parts | 6 |
+| Completed parts | 25 |
+| Remaining parts | 5 |
 | Required commits | 30 |
 | Required pushed commits | 30 |
 | Days | 3 |
