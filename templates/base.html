@@ -36,7 +36,7 @@
             <a href="#analysis" style="color:var(--text)">Analysis</a>
           </nav>
           <div style="display:flex;align-items:center;gap:14px;font-size:13px" class="muted">
-            <span style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--up)"></span>Ready</span>
+            {% include "partials/connection_health.html" %}
             {% block header_theme %}
             {% include "partials/theme_toggle.html" %}
             {% endblock %}
@@ -50,7 +50,9 @@
         Ask the research desk
       </button>
     </div>
+    {% include "partials/endpoint_settings.html" %}
     <script src="/static/js/theme.js"></script>
+    <script src="/static/js/connection.js"></script>
     {% block scripts %}{% endblock %}
   </body>
 </html>

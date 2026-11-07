@@ -1,0 +1,24 @@
+{# Connection Health Indicator & Re-check Button matching Home.tsx:259 #}
+<div id="connection-health-container" style="display:flex;align-items:center;gap:10px;font-size:13px">
+  <span id="connection-indicator" style="display:flex;align-items:center;gap:6px" data-status="ready">
+    <span id="connection-dot" style="width:8px;height:8px;border-radius:50%;background:var(--up);display:inline-block"></span>
+    <span id="connection-status-text">Ready</span>
+  </span>
+
+  <button id="connection-refresh-btn" type="button" class="research-icon-button"
+    title="Check research endpoint" aria-label="Check research endpoint"
+    style="background:0 0;border:0;cursor:pointer;color:var(--muted);font-size:14px;padding:4px 6px;border-radius:6px;display:inline-flex;align-items:center">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+    </svg>
+  </button>
+
+  <button id="connection-settings-btn" type="button" class="research-icon-button"
+    title="Endpoint settings" aria-label="Endpoint settings"
+    style="background:0 0;border:0;cursor:pointer;color:var(--muted);font-size:14px;padding:4px 6px;border-radius:6px;display:inline-flex;align-items:center">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3"></circle>
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+    </svg>
+  </button>
+</div>
