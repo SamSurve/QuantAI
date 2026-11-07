@@ -1,0 +1,12 @@
+{# 1.2-second startup reveal matching StartupReveal.tsx #}
+<div id="startup-reveal" class="startup-reveal" aria-hidden="true"
+  style="position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;transition:opacity .25s ease-out;pointer-events:none">
+  <div class="startup-reveal__content" style="display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center">
+    <img src="/static/assets/analysts-ledger-logo.png" alt="" class="startup-reveal__mark" style="width:48px;height:48px;border-radius:12px" />
+    <p class="startup-reveal__name" style="font-size:18px;font-weight:700;letter-spacing:0.12em;margin:0;color:var(--text)">QUANTAI</p>
+    <svg class="startup-reveal__trace" viewBox="0 0 260 54" fill="none" preserveAspectRatio="none" style="width:200px;height:40px;stroke:var(--brand);stroke-width:2.2;stroke-linecap:round">
+      <path d="M0 43H32L50 35L75 39L101 19L127 31L154 24L179 29L203 8L230 17L260 5" />
+    </svg>
+    <p class="startup-reveal__note" style="font-size:13px;color:var(--muted);margin:0">Research. Understand. Decide.</p>
+  </div>
+</div>
