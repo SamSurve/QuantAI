@@ -13,7 +13,7 @@ QuantAI is deployed as a 100% Python/FastAPI serverless application on Vercel.
 - **Framework Architecture**: ASGI / FastAPI application with Jinja2 server-rendered UI and AgentOS streaming JSON APIs.
 - **Entrypoints**:
   - `api/index.py` (canonical ASGI application entrypoint)
-  - `index.py` (root ASGI re-export for local and serverless execution)
+  - `index.py` (root ASGI re-export for local development (`uvicorn index:app --reload`))
   - Modular file routes:
     - `api/health.py`
     - `api/agents.py`
