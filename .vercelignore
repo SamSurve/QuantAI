@@ -1,0 +1,17 @@
+# Vercel deployment ignore patterns
+tests/
+__pycache__/
+*.pyc
+*.pyo
+.vercel/
+dist/
+node_modules/
+.venv/
+.git/
+tools/
+.pytest_cache/
+.ruff_cache/
+*.pem
+*.key
+.env*
+!.env.example

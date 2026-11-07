@@ -89,7 +89,7 @@ Stop after Part 25.
 - [x] PART 28 — Research regressions and push wrapper upgrade
 - [x] PART 29 — Company deep analysis and comparison regressions
 - [x] PART 30 — AgentOS errors and unified regression inventory
-- [ ] PART 31 — Vercel deployment configuration and ASGI routing
+- [x] PART 31 — Vercel deployment configuration and ASGI routing
 - [ ] PART 32 — Local Uvicorn runtime and environment documentation
 - [ ] PART 33 — Vercel configuration verification and deployment honesty
 - [ ] PART 34 — All 21 UI features and Apple visual parity
@@ -109,8 +109,8 @@ DAY 3 STATUS: IN PROGRESS
 | Metric | Target |
 |---|---:|
 | Total parts | 36 |
-| Completed parts | 30 |
-| Remaining parts | 6 |
+| Completed parts | 31 |
+| Remaining parts | 5 |
 | Required commits | 36 |
 | Required pushed commits | 36 |
 | Days | 3 |

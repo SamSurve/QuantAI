@@ -65,15 +65,15 @@ def no_provider_environment() -> dict[str, str]:
 def check_deployment_files() -> None:
     config = json.loads((ROOT / "vercel.json").read_text(encoding="utf-8"))
     function = config["functions"]["api/**/*.py"]
-    assert config["framework"] == "vite"
-    assert config["outputDirectory"] == "dist/public"
-    assert function["includeFiles"] == "api/**"
+    assert function["maxDuration"] == 60
+    assert "api/**" in function["includeFiles"]
+    assert "templates/**" in function["includeFiles"]
+    assert "static/**" in function["includeFiles"]
     assert "tests/**" in function["excludeFiles"]
     assert "__pycache__" in function["excludeFiles"]
     assert any(
-        rewrite["source"] == "/:path((?!api(?:/|$)).*)"
-        and rewrite["destination"] == "/index.html"
-        for rewrite in config["rewrites"]
+        rewrite.get("destination") == "/api/index.py"
+        for rewrite in config.get("rewrites", [])
     )
     for entrypoint in (
         "api/health.py",
