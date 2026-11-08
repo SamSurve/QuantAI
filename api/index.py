@@ -180,6 +180,15 @@ def prefixed_health() -> dict[str, Any]:
     return health_payload()
 
 
+@app.get("/api/index.py", include_in_schema=False)
+def vercel_rewrite_debug(request: Request) -> dict[str, Any]:
+    return {
+        "url": str(request.url),
+        "path": request.url.path,
+        "headers": {k: v for k, v in request.headers.items() if not k.lower().endswith("key") and not k.lower().endswith("auth") and "secret" not in k.lower()},
+    }
+
+
 @app.get("/health", include_in_schema=False)
 def prefix_stripped_health() -> dict[str, Any]:
     """Support Vercel function adapters that strip the function's `/api` prefix."""
