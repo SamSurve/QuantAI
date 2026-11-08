@@ -11,6 +11,7 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 
 from api.research_errors import ResearchError
+from api.research_schemas import ErrorCategory
 from api.web.company_profile import (
     format_company_profile,
     format_competitor_evidence,
@@ -205,6 +206,28 @@ def register_web_routes(
                         },
                     )
                 except ResearchError as err:
+                    if err.category == ErrorCategory.AMBIGUOUS_ENTITY and err.candidates:
+                        formatted_candidates = []
+                        for c in err.candidates:
+                            raw_ex = (c.exchange or "").upper()
+                            display_exchange = "NSE" if raw_ex in {"NSI", "NSE"} else raw_ex
+                            raw_type = (c.quote_type or "Equity").title()
+                            formatted_candidates.append({
+                                "symbol": c.symbol,
+                                "name": c.name or c.symbol,
+                                "exchange": display_exchange,
+                                "quote_type": raw_type,
+                            })
+                        return templates.TemplateResponse(
+                            request=request,
+                            name="pages/home.html",
+                            context={
+                                "query": normalized,
+                                "state": "disambiguation",
+                                "candidates": formatted_candidates,
+                                "candidate_count": len(formatted_candidates),
+                            },
+                        )
                     return templates.TemplateResponse(
                         request=request,
                         name="pages/home.html",

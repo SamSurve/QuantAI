@@ -135,6 +135,8 @@ async def orchestrate_dual_research(
 
     # Both failed: propagate the first exception or convert to ResearchError
     if isinstance(market_res, ResearchError):
+        if not market_res.candidates and isinstance(deep_res, ResearchError) and deep_res.candidates:
+            raise deep_res
         raise market_res
     if isinstance(deep_res, ResearchError):
         raise deep_res

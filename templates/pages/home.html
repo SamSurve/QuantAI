@@ -16,7 +16,9 @@
   </section>
 
   <div id="research-results">
-    {% if state == "loading" %}
+    {% if state == "disambiguation" and candidates %}
+      {% include "partials/company_disambiguation.html" %}
+    {% elif state == "loading" %}
       {% include "partials/research_skeleton.html" %}
     {% elif state == "error" %}
       {% include "partials/research_status.html" %}
@@ -54,7 +56,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/js/search.js"></script>
+<script src="/static/js/search.js?v=20261109"></script>
 <script src="/static/vendor/chart/chart.umd.min.js"></script>
 <script src="/static/js/market_chart.js"></script>
 <script src="/static/js/chat.js?v=20261108"></script>

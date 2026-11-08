@@ -244,6 +244,19 @@ class EntityResolutionService:
     def __init__(self, cache: AsyncTTLCache[EntityResolution] | None = None) -> None:
         self._cache = cache or AsyncTTLCache()
 
+    async def search_candidates(self, query: str) -> list[CompanyCandidate]:
+        normalized = (query or "").strip()
+        if not normalized:
+            return []
+        search_query = company_search_query(normalized)
+        try:
+            return await asyncio.wait_for(
+                asyncio.to_thread(self._search_candidates, search_query),
+                timeout=EXTERNAL_TIMEOUT_SECONDS,
+            )
+        except Exception:
+            return []
+
     async def resolve(self, query: str) -> EntityResolution:
         normalized_query = _normalize_symbol(query)
         return (
@@ -279,7 +292,11 @@ class EntityResolutionService:
 
         selected = self._select_candidate(search_query, candidates)
         if selected is None:
-            raise ResearchError(ErrorCategory.AMBIGUOUS_ENTITY, detail=f"ambiguous query {query}")
+            raise ResearchError(
+                ErrorCategory.AMBIGUOUS_ENTITY,
+                detail=f"ambiguous query {query}",
+                candidates=candidates,
+            )
 
         candidate, confidence = selected
         return EntityResolution(

@@ -26,7 +26,14 @@ from .ai_providers import provider_runtime_status
 from .research_errors import ResearchError
 from .research_orchestrator import AnalysisSynthesisService, ResearchOrchestrator
 from .research_protection import ResearchConcurrencyGuard, SlidingWindowRateLimiter
-from .research_schemas import ErrorCategory, ErrorResponse, ResearchRequest, ResearchResponse
+from pydantic import BaseModel
+from .research_schemas import (
+    CompanyCandidate,
+    ErrorCategory,
+    ErrorResponse,
+    ResearchRequest,
+    ResearchResponse,
+)
 from .web.routes import prefers_html_over_json, register_web_routes, render_not_found
 from .web.chat import chat_router
 
@@ -197,6 +204,29 @@ def prefix_stripped_health() -> dict[str, Any]:
 # Register root content negotiation and web routes
 register_web_routes(app, health_payload, research_orchestrator=research_orchestrator)
 app.include_router(chat_router)
+
+
+class CompanySearchResponse(BaseModel):
+    """Clean JSON response contract for company disambiguation search."""
+
+    query: str
+    count: int
+    candidates: list[CompanyCandidate]
+
+
+@app.get("/api/companies/search", response_model=CompanySearchResponse, tags=["companies"])
+@app.get("/companies/search", response_model=CompanySearchResponse, include_in_schema=False)
+async def company_search_endpoint(request: Request, query: str = "") -> CompanySearchResponse:
+    """Dedicated company candidate search endpoint for interactive disambiguation."""
+    normalized = (query or "").strip()
+    if not normalized:
+        return CompanySearchResponse(query="", count=0, candidates=[])
+    try:
+        candidates = await research_orchestrator.entity_service.search_candidates(normalized)
+        return CompanySearchResponse(query=normalized, count=len(candidates), candidates=candidates)
+    except Exception as err:
+        LOGGER.warning("company_search_error query=%s: %s", normalized, err)
+        return CompanySearchResponse(query=normalized, count=0, candidates=[])
 
 
 @app.post("/api/research", response_model=ResearchResponse, responses={

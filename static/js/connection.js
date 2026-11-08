@@ -137,9 +137,21 @@
 
   function recordActivity(query, mode, status, confidence) {
     var current = getRecentActivity();
+    var q = (query || '').trim();
+    if (!q) return;
+
+    // Deduplicate consecutive identical submissions
+    if (current.length > 0 && current[0].query && current[0].query.toLowerCase() === q.toLowerCase()) {
+      current[0].status = status || current[0].status || 'completed';
+      current[0].confidence = confidence || current[0].confidence || 'high';
+      saveRecentActivity(current);
+      renderActivityList(current);
+      return;
+    }
+
     var newItem = {
       id: 'act-' + Date.now(),
-      query: (query || '').trim(),
+      query: q,
       type: (mode || 'Market Intelligence').replace('_', ' '),
       status: status || 'completed',
       confidence: confidence || 'high',

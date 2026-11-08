@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
-from .research_schemas import ErrorCategory
+from .research_schemas import CompanyCandidate, ErrorCategory
 
 
 SAFE_MESSAGES: dict[ErrorCategory, str] = {
@@ -54,6 +54,7 @@ class ResearchError(Exception):
     category: ErrorCategory
     detail: str = ""
     retryable: bool = False
+    candidates: list[CompanyCandidate] = field(default_factory=list)
 
     @property
     def message(self) -> str:

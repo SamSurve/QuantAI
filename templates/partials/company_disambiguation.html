@@ -1,0 +1,96 @@
+{# Interactive Company Disambiguation Selection Interface #}
+<section id="company-disambiguation" class="disambiguation-section" aria-label="Which company are you looking for?"
+  style="margin-bottom:36px">
+  
+  <div style="text-align:center;margin-bottom:28px">
+    <div style="display:inline-flex;align-items:center;gap:6px;background:var(--fill);border:1px solid var(--line);border-radius:999px;padding:4px 12px;margin-bottom:12px">
+      <span style="width:6px;height:6px;border-radius:50%;background:var(--brand);display:inline-block"></span>
+      <span class="ledger-label" style="font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted)">
+        Multiple Matches Found
+      </span>
+    </div>
+    <h2 class="h2" style="font-size:28px;font-weight:700;letter-spacing:-0.025em;color:var(--text);margin:0 0 8px">
+      Which company are you looking for?
+    </h2>
+    <p class="muted" style="font-size:15px;max-width:540px;margin:0 auto;line-height:1.5">
+      Multiple listed entities matched <strong style="color:var(--text)">"{{ query }}"</strong>. Select a verified listing below to generate its evidence-based research dossier.
+    </p>
+  </div>
+
+  <div class="disambiguation-grid"
+    style="display:grid;grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));gap:16px"
+    role="list" aria-label="Company match candidates">
+    {% for candidate in candidates %}
+    <div class="disambiguation-card" role="listitem"
+      tabindex="0"
+      data-select-ticker="{{ candidate.symbol }}"
+      style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;display:flex;flex-direction:column;justify-content:space-between;gap:16px;cursor:pointer;position:relative;transition:all 0.18s cubic-bezier(0.16, 1, 0.3, 1)">
+      
+      <div>
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px">
+          <span class="disambiguation-ticker"
+            style="font-family:var(--font-mono, monospace);font-size:14px;font-weight:700;color:var(--text);background:var(--fill);border:1px solid var(--line);padding:4px 10px;border-radius:8px;letter-spacing:0.02em">
+            {{ candidate.symbol }}
+          </span>
+          <div style="display:flex;align-items:center;gap:6px">
+            {% if candidate.exchange %}
+            <span class="b na" style="font-size:11px;padding:3px 8px;font-weight:600;border-radius:6px">
+              {{ candidate.exchange }}
+            </span>
+            {% endif %}
+            {% if candidate.quote_type %}
+            <span class="b na" style="font-size:11px;padding:3px 8px;font-weight:500;border-radius:6px">
+              {{ candidate.quote_type }}
+            </span>
+            {% endif %}
+          </div>
+        </div>
+        
+        <h3 class="disambiguation-name"
+          style="font-size:16px;font-weight:600;line-height:1.35;color:var(--text);margin:0">
+          {{ candidate.name or candidate.symbol }}
+        </h3>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:1px solid var(--line)">
+        <span class="muted" style="font-size:12px">Verified listing</span>
+        <button type="button" class="disambiguation-select-btn" data-select-ticker="{{ candidate.symbol }}"
+          style="background:var(--text);color:var(--bg);border:0;border-radius:999px;padding:7px 16px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:opacity 0.15s ease, transform 0.15s ease">
+          <span>Research this company</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <style>
+    .disambiguation-card:hover {
+      border-color: var(--brand) !important;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+    }
+    .disambiguation-card:focus-visible {
+      outline: 2px solid #0071e3;
+      outline-offset: 2px;
+    }
+    .disambiguation-card:hover .disambiguation-select-btn {
+      opacity: 0.92;
+      transform: scale(1.02);
+    }
+    .disambiguation-select-btn:hover {
+      opacity: 0.85 !important;
+    }
+    @media (max-width: 640px) {
+      .disambiguation-grid {
+        grid-template-columns: 1fr !important;
+      }
+      .disambiguation-card {
+        padding: 16px !important;
+      }
+    }
+  </style>
+</section>
