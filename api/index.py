@@ -176,27 +176,16 @@ def health_payload() -> dict[str, Any]:
 
 @app.get("/api", tags=["operations"])
 @app.get("/api/health", tags=["operations"])
+@app.get("/api/index.py", tags=["operations"], include_in_schema=False)
 def prefixed_health() -> dict[str, Any]:
     return health_payload()
 
 
-@app.get("/api/index.py", include_in_schema=False)
-def vercel_rewrite_debug(request: Request) -> dict[str, Any]:
-    safe_scope = {}
-    for k, v in request.scope.items():
-        if k == "headers":
-            safe_scope[k] = [(h[0].decode("latin1"), h[1].decode("latin1")) for h in v]
-        elif isinstance(v, (str, int, float, bool, list)):
-            safe_scope[k] = v
-        elif isinstance(v, bytes):
-            safe_scope[k] = v.decode("latin1")
-        else:
-            safe_scope[k] = str(v)
-    return {
-        "url": str(request.url),
-        "path": request.url.path,
-        "scope": safe_scope,
-    }
+@app.get("/api/openapi", include_in_schema=False)
+@app.get("/openapi", include_in_schema=False)
+def openapi_endpoint() -> dict[str, Any]:
+    """Expose OpenAPI JSON schema for Vercel file routing."""
+    return app.openapi()
 
 
 @app.get("/health", include_in_schema=False)
