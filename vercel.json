@@ -5,6 +5,11 @@
       "maxDuration": 60,
       "includeFiles": "templates/**,static/**,api/**",
       "excludeFiles": "{tests/**,**/__pycache__/**,**/*.pyc,**/*.pyo,**/.pytest_cache/**,.vercel/**,dist/**,node_modules/**}"
+    },
+    "index.py": {
+      "maxDuration": 60,
+      "includeFiles": "templates/**,static/**,api/**",
+      "excludeFiles": "{tests/**,**/__pycache__/**,**/*.pyc,**/*.pyo,**/.pytest_cache/**,.vercel/**,dist/**,node_modules/**}"
     }
   },
   "headers": [
