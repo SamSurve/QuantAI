@@ -822,6 +822,8 @@ class ResearchOrchestrator:
             pulse, market_freshness = pulse_outcome
             response.company = pulse.company
             response.market = pulse.market
+            if response.market and response.market.currency is None and response.company and response.company.currency:
+                response.market = response.market.model_copy(update={"currency": response.company.currency})
             response.status.market = pulse.status
             if pulse.source:
                 response.sources.append(pulse.source)

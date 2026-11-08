@@ -29,7 +29,7 @@ from .research_schemas import (
     ServiceState,
     SourceRecord,
 )
-from .research_services import EXTERNAL_TIMEOUT_SECONDS, _optional_float, _optional_int, dividend_yield_fraction, utc_stamp
+from .research_services import EXTERNAL_TIMEOUT_SECONDS, _optional_float, _optional_int, dividend_yield_fraction, resolve_source_currency, utc_stamp
 
 
 COMPANY_PROFILE_TTL_SECONDS = 60 * 60
@@ -91,6 +91,12 @@ class CompanyProfileService:
 
         now = utc_stamp()
         headquarters = _headquarters(info)
+        curr = resolve_source_currency(
+            entity.symbol,
+            info.get("exchange") or entity.exchange,
+            info=info,
+            fallback_currency=entity.currency,
+        )
         overview = CompanyOverview(
             company_name=info.get("longName") or info.get("shortName") or entity.name,
             ticker=entity.symbol,
@@ -103,7 +109,7 @@ class CompanyProfileService:
             business_description=info.get("longBusinessSummary"),
             employees=_optional_int(info.get("fullTimeEmployees")),
             market_cap=_optional_int(info.get("marketCap")),
-            currency=info.get("currency") or entity.currency,
+            currency=curr,
         )
         leadership = _leadership(info.get("companyOfficers"))
         ceo = next((person for person in leadership if person.title and "chief executive" in person.title.lower()), None)
@@ -139,6 +145,12 @@ class FinancialHealthService:
         issues = [item for item in (income_result, balance_result, cash_result) if isinstance(item, ResearchError)]
         now = utc_stamp()
 
+        curr = resolve_source_currency(
+            entity.symbol,
+            info.get("exchange") or entity.exchange,
+            info=info,
+            fallback_currency=entity.currency,
+        )
         financials = FinancialHealth(
             revenue=_statement_value(income, ["Total Revenue", "Operating Revenue"]),
             net_income=_statement_value(income, ["Net Income", "Net Income Common Stockholders"]),
@@ -153,7 +165,7 @@ class FinancialHealthService:
             dividend_yield=dividend_yield_fraction(info.get("dividendYield")),
             return_on_equity=_optional_float(info.get("returnOnEquity")),
             return_on_assets=_optional_float(info.get("returnOnAssets")),
-            currency=info.get("currency") or entity.currency,
+            currency=curr,
             fiscal_period_end=_fiscal_period(income) or _fiscal_period(balance) or _fiscal_period(cash),
         )
         has_values = any(value is not None for key, value in financials.model_dump().items() if key not in {"currency", "fiscal_period_end"})
@@ -199,9 +211,15 @@ def market_snapshot_from_profile(info: dict[str, Any], currency: str | None, as_
     }
     if not any(value is not None for value in values.values()):
         return None
+    resolved_curr = resolve_source_currency(
+        info.get("symbol"),
+        info.get("exchange"),
+        info=info,
+        fallback_currency=currency,
+    )
     return MarketSnapshot(
         current_price=values["current_price"],
-        currency=info.get("currency") or currency,
+        currency=resolved_curr,
         daily_change=_optional_float(info.get("regularMarketChange")),
         daily_change_percent=_optional_float(info.get("regularMarketChangePercent")),
         volume=_optional_int(info.get("regularMarketVolume") or info.get("volume")),

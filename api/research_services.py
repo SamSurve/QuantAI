@@ -74,6 +74,78 @@ def _normalize_symbol(value: str) -> str:
     return value.strip().upper().replace(" ", "")
 
 
+_EXCHANGE_CURRENCIES: dict[str, str] = {
+    "NSI": "INR",
+    "BSE": "INR",
+    "NSE": "INR",
+    "NMS": "USD",
+    "NYQ": "USD",
+    "NGM": "USD",
+    "NYSE": "USD",
+    "NASDAQ": "USD",
+    "BATS": "USD",
+    "IEX": "USD",
+    "AMEX": "USD",
+    "LSE": "GBP",
+    "FTSE": "GBP",
+    "EPA": "EUR",
+    "ETR": "EUR",
+    "FRA": "EUR",
+    "AMS": "EUR",
+    "XETRA": "EUR",
+}
+
+_SYMBOL_SUFFIX_CURRENCIES: dict[str, str] = {
+    ".NS": "INR",
+    ".BO": "INR",
+    ".L": "GBP",
+    ".DE": "EUR",
+    ".PA": "EUR",
+    ".AS": "EUR",
+}
+
+
+def resolve_source_currency(
+    symbol: str | None,
+    exchange: str | None = None,
+    info: dict[str, Any] | None = None,
+    history_metadata: dict[str, Any] | None = None,
+    fallback_currency: str | None = None,
+) -> str | None:
+    """Resolve authoritative market currency from source metadata, exchange, or ticker.
+
+    Trusts source-provided currency metadata first, then verified exchange and symbol
+    qualification, falling back cleanly without guessing an invented currency.
+    """
+    if info:
+        curr = info.get("currency")
+        if curr and isinstance(curr, str) and curr.strip():
+            return curr.strip().upper()
+        fin_curr = info.get("financialCurrency")
+        if fin_curr and isinstance(fin_curr, str) and fin_curr.strip():
+            return fin_curr.strip().upper()
+
+    if history_metadata:
+        hist_curr = history_metadata.get("currency")
+        if hist_curr and isinstance(hist_curr, str) and hist_curr.strip():
+            return hist_curr.strip().upper()
+
+    if fallback_currency and isinstance(fallback_currency, str) and fallback_currency.strip():
+        return fallback_currency.strip().upper()
+
+    norm_sym = _normalize_symbol(symbol) if symbol else ""
+    for suffix, curr in _SYMBOL_SUFFIX_CURRENCIES.items():
+        if norm_sym.endswith(suffix):
+            return curr
+
+    if exchange:
+        norm_ex = exchange.strip().upper()
+        if norm_ex in _EXCHANGE_CURRENCIES:
+            return _EXCHANGE_CURRENCIES[norm_ex]
+
+    return None
+
+
 def _normalized_name(value: str | None) -> str:
     return re.sub(r"[^a-z0-9]", "", (value or "").lower())
 
@@ -343,17 +415,24 @@ class MarketDataService:
         daily_change_percent = (daily_change / previous_close) * 100 if daily_change is not None and previous_close not in {None, 0} else None
         quote_price = latest_close if latest_close is not None else _optional_float(info.get("currentPrice") or info.get("regularMarketPrice"))
 
+        resolved_currency = resolve_source_currency(
+            entity.symbol,
+            info.get("exchange") or entity.exchange,
+            info=info,
+            fallback_currency=entity.currency,
+        )
         enriched_entity = CompanyIdentity(
             symbol=entity.symbol,
             name=info.get("longName") or info.get("shortName") or entity.name,
             exchange=info.get("exchange") or entity.exchange,
             sector=info.get("sector"),
             industry=info.get("industry"),
-            currency=info.get("currency"),
+            currency=resolved_currency,
             identifier_confidence=entity.identifier_confidence,
         )
         market = MarketSnapshot(
             current_price=quote_price,
+            currency=resolved_currency,
             daily_change=daily_change,
             daily_change_percent=daily_change_percent,
             volume=(history[-1].volume if history else _optional_int(info.get("regularMarketVolume") or info.get("volume"))),

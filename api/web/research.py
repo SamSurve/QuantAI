@@ -68,12 +68,17 @@ def merge_research_records(
         merged_status.governance = deep.status.governance or merged_status.governance
         merged_status.competitors = deep.status.competitors or merged_status.competitors
 
+    merged_company = market.company or deep.company
+    merged_market = market.market or deep.market
+    if merged_market and merged_market.currency is None and merged_company and merged_company.currency:
+        merged_market = merged_market.model_copy(update={"currency": merged_company.currency})
+
     return ResearchResponse(
         request_id=market.request_id,
         query=market.query,
-        company=market.company or deep.company,
+        company=merged_company,
         candidates=market.candidates or deep.candidates,
-        market=market.market or deep.market,
+        market=merged_market,
         history=market.history or deep.history,
         news=market.news if market.news else deep.news,
         analysis=market.analysis or deep.analysis,

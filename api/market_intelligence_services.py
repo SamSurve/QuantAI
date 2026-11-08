@@ -31,7 +31,7 @@ from .research_schemas import (
     ServiceState,
     SourceRecord,
 )
-from .research_services import EXTERNAL_TIMEOUT_SECONDS, _optional_float, _optional_int, dividend_yield_fraction, utc_stamp
+from .research_services import EXTERNAL_TIMEOUT_SECONDS, _optional_float, _optional_int, dividend_yield_fraction, resolve_source_currency, utc_stamp
 
 
 MARKET_PULSE_TTL_SECONDS = 60
@@ -118,18 +118,24 @@ class MarketPulseService:
             return MarketPulseResult(entity, None, ServiceState.UNAVAILABLE, issue or ResearchError(ErrorCategory.DATA_UNAVAILABLE, detail="market response empty", retryable=True), None, None)
 
         now = utc_stamp()
+        curr = resolve_source_currency(
+            entity.symbol,
+            info.get("exchange") or entity.exchange,
+            info=info,
+            fallback_currency=entity.currency,
+        )
         enriched = CompanyIdentity(
             symbol=entity.symbol,
             name=info.get("longName") or info.get("shortName") or entity.name,
             exchange=info.get("exchange") or entity.exchange,
             sector=info.get("sector") or entity.sector,
             industry=info.get("industry") or entity.industry,
-            currency=info.get("currency") or entity.currency,
+            currency=curr,
             identifier_confidence=entity.identifier_confidence,
         )
         market = MarketSnapshot(
             current_price=_optional_float(info.get("regularMarketPrice") or info.get("currentPrice")),
-            currency=info.get("currency") or entity.currency,
+            currency=curr,
             daily_change=_optional_float(info.get("regularMarketChange")),
             daily_change_percent=_optional_float(info.get("regularMarketChangePercent")),
             volume=_optional_int(info.get("regularMarketVolume") or info.get("volume")),
