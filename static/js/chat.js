@@ -2,6 +2,7 @@
  * QuantAI AgentOS Chat Client
  * Connects directly to same-origin /api/agents/groq-finance-agent/runs
  * Renders assistant responses via /api/chat/render
+ * Provides compact floating launcher, multiline input, empty state chips, and session continuity
  */
 
 (function () {
@@ -14,13 +15,15 @@
 
   var toggleBtn = document.getElementById('chat-toggle');
   var drawer = document.getElementById('chat-drawer');
+  var minimizeBtn = document.getElementById('chat-minimize');
   var closeBtn = document.getElementById('chat-close');
   var form = document.getElementById('chat-form');
   var input = document.getElementById('chat-input');
   var submitBtn = document.getElementById('chat-submit');
   var messagesContainer = document.getElementById('chat-messages');
   var turnCounter = document.getElementById('chat-turn-counter');
-  var pillButtons = document.querySelectorAll('.chat-pill');
+  var connectionDot = document.getElementById('chat-connection-dot');
+  var connectionText = document.getElementById('chat-connection-text');
 
   if (!toggleBtn || !drawer) return;
 
@@ -40,19 +43,28 @@
     }
   }
 
+  function isDrawerOpen() {
+    return drawer.classList.contains('is-open') || drawer.style.display === 'flex';
+  }
+
   function setDrawerOpen(open) {
     if (open) {
       drawer.style.display = 'flex';
+      void drawer.offsetWidth; // Force reflow
+      drawer.classList.add('is-open');
       drawer.setAttribute('aria-hidden', 'false');
       toggleBtn.setAttribute('aria-expanded', 'true');
-      toggleBtn.style.display = 'none';
-      if (input) input.focus();
+      if (input) {
+        input.focus();
+      }
     } else {
-      drawer.style.display = 'none';
+      drawer.classList.remove('is-open');
       drawer.setAttribute('aria-hidden', 'true');
       toggleBtn.setAttribute('aria-expanded', 'false');
-      toggleBtn.style.display = 'block';
-      if (toggleBtn) toggleBtn.focus();
+      drawer.style.display = 'none';
+      if (toggleBtn) {
+        toggleBtn.focus();
+      }
     }
   }
 
@@ -63,10 +75,18 @@
     }
   }
 
+  function hideEmptyState() {
+    var es = document.getElementById('chat-empty-state');
+    if (es && es.parentNode) {
+      es.parentNode.removeChild(es);
+    }
+  }
+
   function appendUserMessage(text) {
+    hideEmptyState();
     var bubble = document.createElement('div');
     bubble.className = 'chat-msg chat-msg--user';
-    bubble.style.cssText = 'align-self:flex-end;max-width:85%;background:var(--text);color:var(--bg);border-radius:14px;padding:10px 14px;font-size:14px;line-height:1.4';
+    bubble.style.cssText = 'align-self:flex-end;max-width:85%;background:var(--text);color:var(--bg);border-radius:14px;padding:10px 14px;font-size:14px;line-height:1.45;word-break:break-word;white-space:pre-wrap';
     bubble.textContent = text;
     messagesContainer.appendChild(bubble);
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
@@ -75,7 +95,7 @@
   function appendAssistantHtml(html) {
     var bubble = document.createElement('div');
     bubble.className = 'chat-msg chat-msg--assistant agent-markdown';
-    bubble.style.cssText = 'align-self:flex-start;max-width:92%;background:var(--fill);border-radius:14px;padding:12px 14px;font-size:14px;line-height:1.5;color:var(--text)';
+    bubble.style.cssText = 'align-self:flex-start;max-width:92%;background:var(--fill);border-radius:14px;padding:12px 14px;font-size:14px;line-height:1.5;color:var(--text);word-break:break-word';
     bubble.innerHTML = html;
     messagesContainer.appendChild(bubble);
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
@@ -132,11 +152,14 @@
 
     appendUserMessage(trimmed);
     updateTurns();
-    if (input) input.value = '';
+    if (input) {
+      input.value = '';
+      input.style.height = '40px';
+    }
 
     isLoading = true;
     if (submitBtn) submitBtn.disabled = true;
-    var indicator = appendLoadingIndicator();
+    appendLoadingIndicator();
 
     try {
       var formPayload = new FormData();
@@ -192,23 +215,84 @@
     }
   }
 
-  // Event Listeners
+  // Expose helper on window for external callers and inline chip handlers
+  window.quantaiSendPrompt = function (prompt) {
+    if (!prompt) return;
+    if (!isDrawerOpen()) {
+      setDrawerOpen(true);
+    }
+    sendMessage(prompt);
+  };
+  window.quantaiToggleChat = function (open) {
+    if (typeof open === 'boolean') setDrawerOpen(open);
+    else setDrawerOpen(!isDrawerOpen());
+  };
+
+  function updateConnectionState() {
+    var isOnline = navigator.onLine !== false;
+    var homeIndicator = document.getElementById('connection-indicator');
+    if (homeIndicator) {
+      var status = homeIndicator.getAttribute('data-status');
+      if (status === 'offline' || status === 'error') {
+        isOnline = false;
+      }
+    }
+    if (connectionDot) {
+      connectionDot.style.background = isOnline ? 'var(--up)' : 'var(--down)';
+    }
+    if (connectionText) {
+      connectionText.textContent = isOnline ? 'Ready' : 'Offline';
+    }
+  }
+
+  // Toggle button click (toggles drawer)
   toggleBtn.addEventListener('click', function () {
-    setDrawerOpen(true);
+    setDrawerOpen(!isDrawerOpen());
   });
 
+  // Minimize button click (closes drawer cleanly preserving history)
+  if (minimizeBtn) {
+    minimizeBtn.addEventListener('click', function () {
+      setDrawerOpen(false);
+    });
+  }
+
+  // Close button click
   if (closeBtn) {
     closeBtn.addEventListener('click', function () {
       setDrawerOpen(false);
     });
   }
 
+  // Escape key closes drawer
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && drawer && drawer.style.display !== 'none') {
+    if (e.key === 'Escape' && isDrawerOpen()) {
       setDrawerOpen(false);
     }
   });
 
+  // Multiline Textarea: Enter to send, Shift+Enter for newline
+  if (input) {
+    input.addEventListener('keydown', function (e) {
+      if ((e.key === 'Enter' || e.keyCode === 13) && !e.shiftKey) {
+        e.preventDefault();
+        var val = input.value;
+        if (val && val.trim()) {
+          sendMessage(val);
+        }
+        return false;
+      }
+    });
+
+    input.addEventListener('input', function () {
+      this.style.height = 'auto';
+      var scrollH = this.scrollHeight;
+      var newH = Math.min(Math.max(40, scrollH), 120);
+      this.style.height = newH + 'px';
+    });
+  }
+
+  // Form submit button
   if (form) {
     form.addEventListener('submit', function (e) {
       e.preventDefault();
@@ -216,10 +300,33 @@
     });
   }
 
-  for (var i = 0; i < pillButtons.length; i++) {
-    pillButtons[i].addEventListener('click', function (e) {
-      var prompt = e.currentTarget.getAttribute('data-prompt');
-      if (prompt) sendMessage(prompt);
+  // Quick contextual prompt pills (3 original prompt buttons)
+  var pillsContainer = document.getElementById('chat-pills');
+  if (pillsContainer) {
+    pillsContainer.addEventListener('click', function (e) {
+      var pill = e.target.closest('.chat-pill');
+      if (pill) {
+        var prompt = pill.getAttribute('data-prompt') || pill.textContent;
+        if (prompt) sendMessage(prompt.trim());
+      }
     });
   }
+
+  // Empty state example prompt chips
+  function bindChips() {
+    var chips = document.querySelectorAll('.chat-example-chip');
+    for (var i = 0; i < chips.length; i++) {
+      chips[i].onclick = function (e) {
+        e.preventDefault();
+        var p = this.getAttribute('data-prompt') || this.textContent;
+        if (p) sendMessage(p.replace(/↗/g, '').trim());
+      };
+    }
+  }
+  bindChips();
+
+  // Monitor network status
+  window.addEventListener('online', updateConnectionState);
+  window.addEventListener('offline', updateConnectionState);
+  updateConnectionState();
 })();

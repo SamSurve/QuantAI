@@ -1,49 +1,269 @@
-{# AgentOS Chat Drawer & Research Desk Trigger #}
-<!-- Floating trigger button matching Main.dc.html:193 -->
+{# AgentOS Chat Drawer & Compact Floating Research Desk Launcher #}
+
+<style>
+  /* Floating Circular Chat Launcher */
+  .chat-floating-btn {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 0;
+    background: var(--text);
+    color: var(--bg);
+    cursor: pointer;
+    z-index: 90;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16), 0 2px 6px rgba(0, 0, 0, 0.08);
+    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease, background-color 0.2s ease;
+  }
+  .chat-floating-btn:hover {
+    transform: scale(1.08) translateY(-2px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.22), 0 4px 10px rgba(0, 0, 0, 0.12);
+  }
+  .chat-floating-btn:active {
+    transform: scale(0.94);
+  }
+  .chat-floating-btn:focus-visible {
+    outline: 3px solid #0071e3;
+    outline-offset: 3px;
+  }
+
+  /* Tooltip on Hover */
+  .chat-launcher-tooltip {
+    position: absolute;
+    right: calc(100% + 12px);
+    top: 50%;
+    transform: translateY(-50%) translateX(6px);
+    background: var(--text);
+    color: var(--bg);
+    font-size: 12px;
+    font-weight: 600;
+    font-family: inherit;
+    padding: 6px 12px;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+  }
+  .chat-floating-btn:hover .chat-launcher-tooltip,
+  .chat-floating-btn:focus-visible .chat-launcher-tooltip {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
+
+  /* Chat Drawer Window */
+  .chat-drawer {
+    display: none;
+    position: fixed;
+    right: 24px;
+    bottom: 86px;
+    width: min(410px, calc(100vw - 32px));
+    height: min(600px, calc(100vh - 110px));
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.08);
+    z-index: 100;
+    flex-direction: column;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(14px) scale(0.97);
+    transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .chat-drawer.is-open {
+    display: flex !important;
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  /* Empty State Prompt Chips */
+  .chat-example-chip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+    width: 100%;
+    background: var(--fill);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--text);
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+  }
+  .chat-example-chip:hover {
+    background: var(--card);
+    border-color: var(--brand);
+    transform: translateX(2px);
+  }
+  .chat-example-chip .chip-arrow {
+    color: var(--muted);
+    font-size: 13px;
+    margin-left: 8px;
+    flex-shrink: 0;
+  }
+
+  /* Chat Input Multiline Textarea */
+  #chat-input {
+    flex: 1;
+    border: 1px solid var(--line);
+    background: var(--card);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.45;
+    border-radius: 18px;
+    padding: 10px 14px;
+    outline: none;
+    resize: none;
+    max-height: 120px;
+    min-height: 40px;
+    transition: border-color 0.2s ease;
+  }
+  #chat-input:focus {
+    border-color: var(--link);
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 640px) {
+    .chat-drawer {
+      right: 8px !important;
+      bottom: 8px !important;
+      width: calc(100vw - 16px) !important;
+      height: calc(100dvh - 16px) !important;
+      max-height: calc(100dvh - 16px) !important;
+      border-radius: 20px !important;
+    }
+    .chat-floating-btn {
+      right: 18px;
+      bottom: 18px;
+      width: 48px;
+      height: 48px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .chat-floating-btn,
+    .chat-drawer,
+    .chat-example-chip,
+    .chat-launcher-tooltip {
+      transition: none !important;
+      transform: none !important;
+    }
+  }
+</style>
+
+<!-- Floating circular trigger button with tooltip -->
 <button id="chat-toggle" type="button" aria-expanded="false" aria-controls="chat-drawer"
-  style="position:fixed;right:32px;bottom:32px;border:0;background:var(--text);color:var(--bg);font-size:15px;font-weight:600;font-family:inherit;border-radius:999px;padding:16px 26px;box-shadow:0 12px 32px rgba(0,0,0,.25);cursor:pointer;z-index:90;transition:transform .15s ease,box-shadow .15s ease">
-  Ask the research desk
+  title="Ask QuantAI" aria-label="Ask QuantAI" class="chat-floating-btn">
+  <span class="sr-only" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">Ask the research desk</span>
+  <span class="chat-launcher-tooltip" aria-hidden="true">Ask QuantAI</span>
+  <svg id="chat-toggle-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+    <circle cx="9" cy="10" r="1" fill="currentColor"></circle>
+    <circle cx="12" cy="10" r="1" fill="currentColor"></circle>
+    <circle cx="15" cy="10" r="1" fill="currentColor"></circle>
+  </svg>
 </button>
 
 <!-- Slide-out Chat Drawer -->
-<div id="chat-drawer" class="chat-drawer" aria-hidden="true" role="dialog" aria-label="Research Desk Chat"
-  style="display:none;position:fixed;right:24px;bottom:24px;width:min(440px, calc(100vw - 32px));height:min(600px, calc(100vh - 48px));background:var(--card);border:1px solid var(--line);border-radius:24px;box-shadow:0 24px 64px rgba(0,0,0,.28);z-index:100;flex-direction:column;overflow:hidden">
+<div id="chat-drawer" class="chat-drawer" aria-hidden="true" role="dialog" aria-label="Research Desk Chat">
   
   <!-- Drawer Header -->
-  <div class="row" style="padding:16px 20px;border-bottom:1px solid var(--line);background:var(--fill)">
-    <div style="min-width:0">
-      <b style="font-size:15px;color:var(--text);display:block">Research Desk</b>
-      <span class="muted" style="font-size:12px">Groq Finance Agent · Sourced AI</span>
+  <div class="row" style="padding:14px 18px;border-bottom:1px solid var(--line);background:var(--fill);align-items:center">
+    <div style="display:flex;align-items:center;gap:10px;min-width:0">
+      <div style="width:26px;height:26px;border-radius:7px;background:var(--brand);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="15" height="15" viewBox="0 0 26 26" aria-hidden="true">
+          <path d="M5 18l5-6 4 3 7-9" fill="none" style="stroke:var(--brandi)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </div>
+      <div style="min-width:0">
+        <div style="display:flex;align-items:center;gap:8px">
+          <b style="font-size:14px;color:var(--text);font-weight:600">Research Desk</b>
+          <div id="chat-connection-badge" style="display:inline-flex;align-items:center;gap:4px">
+            <span id="chat-connection-dot" style="width:6px;height:6px;border-radius:50%;background:var(--up);display:inline-block"></span>
+            <span id="chat-connection-text" style="font-size:11px;color:var(--muted);font-weight:500">Ready</span>
+          </div>
+        </div>
+        <span class="muted" style="font-size:11px;line-height:1.2;display:block">Groq Finance Agent · Sourced AI</span>
+      </div>
     </div>
-    <div class="row" style="gap:8px">
+    <div class="row" style="gap:6px;align-items:center">
       <span id="chat-turn-counter" class="b lo" style="font-size:11px;padding:2px 8px">0 turns</span>
-      <button id="chat-close" type="button" aria-label="Close chat"
-        style="background:0 0;border:0;cursor:pointer;color:var(--muted);font-size:18px;line-height:1;padding:4px 8px;border-radius:6px">
+      <button id="chat-minimize" type="button" aria-label="Minimize chat" title="Minimize"
+        style="background:0 0;border:0;cursor:pointer;color:var(--muted);padding:4px 6px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+      </button>
+      <button id="chat-close" type="button" aria-label="Close chat" title="Close"
+        style="background:0 0;border:0;cursor:pointer;color:var(--muted);font-size:16px;line-height:1;padding:4px 6px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center">
         ✕
       </button>
     </div>
   </div>
 
-  <!-- Quick prompts row -->
-  <div id="chat-pills" style="padding:8px 16px;border-bottom:1px solid var(--line);display:flex;gap:6px;overflow-x:auto;white-space:nowrap;background:var(--card)">
-    <button type="button" class="chat-pill chip" data-prompt="Pressure-test the thesis" style="padding:4px 10px;font-size:12px">Pressure-test the thesis</button>
-    <button type="button" class="chat-pill chip" data-prompt="Trace the source lane" style="padding:4px 10px;font-size:12px">Trace the source lane</button>
-    <button type="button" class="chat-pill chip" data-prompt="Separate evidence from interpretation" style="padding:4px 10px;font-size:12px">Separate evidence from interpretation</button>
+  <!-- Quick prompts row (Three original prompt buttons strictly preserved) -->
+  <div id="chat-pills" style="padding:8px 14px;border-bottom:1px solid var(--line);display:flex;gap:6px;overflow-x:auto;white-space:nowrap;background:var(--card)">
+    <button type="button" class="chat-pill chip" data-prompt="Pressure-test the thesis" onclick="window.quantaiSendPrompt && window.quantaiSendPrompt('Pressure-test the thesis')" style="padding:4px 10px;font-size:12px">Pressure-test the thesis</button>
+    <button type="button" class="chat-pill chip" data-prompt="Trace the source lane" onclick="window.quantaiSendPrompt && window.quantaiSendPrompt('Trace the source lane')" style="padding:4px 10px;font-size:12px">Trace the source lane</button>
+    <button type="button" class="chat-pill chip" data-prompt="Separate evidence from interpretation" onclick="window.quantaiSendPrompt && window.quantaiSendPrompt('Separate evidence from interpretation')" style="padding:4px 10px;font-size:12px">Separate evidence from interpretation</button>
   </div>
 
   <!-- Messages Container -->
   <div id="chat-messages" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px">
-    <div class="chat-msg chat-msg--assistant" style="align-self:flex-start;max-width:92%;background:var(--fill);border-radius:14px;padding:12px 14px;font-size:14px;line-height:1.5;color:var(--text)">
-      <p style="margin:0">Hello! I am the QuantAI finance research assistant. You can ask questions about the returned deterministic evidence, financial statements, or market context.</p>
+    
+    <!-- Welcoming Initial Empty State -->
+    <div id="chat-empty-state" style="padding:14px 6px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px">
+      <div style="width:42px;height:42px;border-radius:12px;background:var(--fill);display:flex;align-items:center;justify-content:center;margin-top:4px">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text)">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          <circle cx="9" cy="10" r="1" fill="currentColor"></circle>
+          <circle cx="12" cy="10" r="1" fill="currentColor"></circle>
+          <circle cx="15" cy="10" r="1" fill="currentColor"></circle>
+        </svg>
+      </div>
+      <div>
+        <h3 style="font-size:16px;font-weight:600;color:var(--text);margin:0 0 4px">Your Research Desk</h3>
+        <p style="font-size:13px;line-height:1.45;color:var(--muted);margin:0;max-width:300px">
+          Ask questions about companies, market movements, financial metrics and research findings.
+        </p>
+      </div>
+      <div style="width:100%;display:flex;flex-direction:column;gap:8px;margin-top:4px">
+        <button type="button" class="chat-example-chip" data-prompt="Explain Reliance's latest performance." onclick="window.quantaiSendPrompt && window.quantaiSendPrompt(this.getAttribute('data-prompt'))">
+          <span>Explain Reliance's latest performance.</span>
+          <span class="chip-arrow">↗</span>
+        </button>
+        <button type="button" class="chat-example-chip" data-prompt="What are the key risks for NVIDIA?" onclick="window.quantaiSendPrompt && window.quantaiSendPrompt(this.getAttribute('data-prompt'))">
+          <span>What are the key risks for NVIDIA?</span>
+          <span class="chip-arrow">↗</span>
+        </button>
+        <button type="button" class="chat-example-chip" data-prompt="Compare TCS and Infosys." onclick="window.quantaiSendPrompt && window.quantaiSendPrompt(this.getAttribute('data-prompt'))">
+          <span>Compare TCS and Infosys.</span>
+          <span class="chip-arrow">↗</span>
+        </button>
+        <button type="button" class="chat-example-chip" data-prompt="Explain the latest market signals." onclick="window.quantaiSendPrompt && window.quantaiSendPrompt(this.getAttribute('data-prompt'))">
+          <span>Explain the latest market signals.</span>
+          <span class="chip-arrow">↗</span>
+        </button>
+      </div>
     </div>
+
   </div>
 
-  <!-- Input Form -->
-  <form id="chat-form" style="padding:12px 16px;border-top:1px solid var(--line);background:var(--fill);display:flex;gap:8px;align-items:center">
-    <input id="chat-input" type="text" placeholder="Ask a financial question..." autocomplete="off"
-      style="flex:1;border:1px solid var(--line);background:var(--card);color:var(--text);font-family:inherit;font-size:14px;border-radius:999px;padding:9px 16px;outline:none" />
+  <!-- Input Form with Multiline Support -->
+  <form id="chat-form" onsubmit="event.preventDefault(); window.quantaiSendPrompt && window.quantaiSendPrompt(document.getElementById('chat-input').value);" style="padding:10px 14px;border-top:1px solid var(--line);background:var(--fill);display:flex;gap:8px;align-items:flex-end">
+    <textarea id="chat-input" rows="1" placeholder="Ask a financial question..." autocomplete="off" onkeydown="if ((event.key==='Enter'||event.keyCode===13)&&!event.shiftKey) { event.preventDefault(); window.quantaiSendPrompt && window.quantaiSendPrompt(this.value); }"></textarea>
     <button id="chat-submit" type="submit"
-      style="background:var(--text);color:var(--bg);border:0;border-radius:999px;padding:9px 18px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer">
+      style="background:var(--text);color:var(--bg);border:0;border-radius:18px;padding:10px 18px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;flex-shrink:0;height:40px;display:inline-flex;align-items:center;justify-content:center;transition:opacity 0.15s">
       Send
     </button>
   </form>
