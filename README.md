@@ -3,11 +3,19 @@
   <h3>Financial Intelligence. Clear Evidence. Better Decisions.</h3>
   <p>AI-powered financial research platform — market data, company analysis and technical signals in one clean workspace.</p>
 
+  <a href="https://quantai-liard.vercel.app"><img src="https://img.shields.io/badge/Live_Demo-Open_QuantAI-16A34A?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo — Open QuantAI"/></a>
+
   <img src="https://img.shields.io/badge/Python-3.12-3776AB?style=for-the-badge&logo=python&logoColor=white"/>
   <img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white"/>
   <img src="https://img.shields.io/badge/Agno-AgentOS-6C47FF?style=for-the-badge"/>
   <img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white"/>
 </div>
+
+---
+
+## 🌐 Live Demo
+
+**[Open QuantAI →](https://quantai-liard.vercel.app)** — Explore the live financial research workspace.
 
 ---
 
@@ -157,7 +165,7 @@ python -m pytest -q
 
 ## ✅ Quality
 
-**389** automated tests passed · **21** UI features audited · **7** infrastructure/security capabilities verified · Native INR (₹) & international currencies · Ruff clean · Desktop, mobile, Light and Dark themes tested.
+**403** automated tests passed · **21** UI features audited · **7** infrastructure/security capabilities verified · Native INR (₹) & international currencies · Ruff clean · Desktop, mobile, Light and Dark themes tested.
 
 ---
 
