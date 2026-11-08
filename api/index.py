@@ -182,10 +182,20 @@ def prefixed_health() -> dict[str, Any]:
 
 @app.get("/api/index.py", include_in_schema=False)
 def vercel_rewrite_debug(request: Request) -> dict[str, Any]:
+    safe_scope = {}
+    for k, v in request.scope.items():
+        if k == "headers":
+            safe_scope[k] = [(h[0].decode("latin1"), h[1].decode("latin1")) for h in v]
+        elif isinstance(v, (str, int, float, bool, list)):
+            safe_scope[k] = v
+        elif isinstance(v, bytes):
+            safe_scope[k] = v.decode("latin1")
+        else:
+            safe_scope[k] = str(v)
     return {
         "url": str(request.url),
         "path": request.url.path,
-        "headers": {k: v for k, v in request.headers.items() if not k.lower().endswith("key") and not k.lower().endswith("auth") and "secret" not in k.lower()},
+        "scope": safe_scope,
     }
 
 
