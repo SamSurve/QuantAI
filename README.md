@@ -20,7 +20,7 @@
 | ⚖️ | **Company Comparison** | Side-by-side comparison of multiple companies |
 | 📡 | **Technical Signals** | Deterministic market signals |
 | 📰 | **News & Events** | Company news and corporate events |
-| 🧠 | **AI Research Briefs** | Structured, AI-generated insights |
+| 🧠 | **AI Research Briefs** | Premium structured intelligence report (exec summary, bullish/bearish, risks, catalysts, verdict) |
 | 💬 | **Research Assistant** | Chat with the Agno AgentOS research desk |
 
 ---
@@ -157,7 +157,7 @@ python -m pytest -q
 
 ## ✅ Quality
 
-**364** automated tests passed · **21** UI features audited · **7** infrastructure/security capabilities verified · Ruff clean · Desktop, mobile, Light and Dark themes tested.
+**389** automated tests passed · **21** UI features audited · **7** infrastructure/security capabilities verified · Native INR (₹) & international currencies · Ruff clean · Desktop, mobile, Light and Dark themes tested.
 
 ---
 
