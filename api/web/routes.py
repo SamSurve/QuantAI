@@ -135,10 +135,23 @@ def register_web_routes(
 
                     is_ai_unavail = (result.status.ai == "unavailable") if (result and result.status) else False
                     ai_text = brief.analysis if (brief and brief.analysis) else None
+                    structured_ai = (
+                        result.analysis
+                        or (result.market_intelligence.executive_brief if result.market_intelligence else None)
+                        or (result.company_deep_analysis.analyst_interpretation if result.company_deep_analysis else None)
+                    )
+                    analysis_as_of = None
+                    if result and result.market_intelligence and result.market_intelligence.freshness and result.market_intelligence.freshness.analysis:
+                        analysis_as_of = result.market_intelligence.freshness.analysis.retrieved_at
+                    elif result and result.company_deep_analysis and result.company_deep_analysis.freshness and result.company_deep_analysis.freshness.analysis:
+                        analysis_as_of = result.company_deep_analysis.freshness.analysis.retrieved_at
+
                     analysis_brief = process_analysis_brief(
                         ai_text,
                         is_unavailable=is_ai_unavail,
                         notice=brief.aiInterpretationNotice if brief else None,
+                        structured=structured_ai,
+                        as_of=analysis_as_of,
                     )
 
                     freshness_src = None

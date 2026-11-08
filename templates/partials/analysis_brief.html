@@ -1,18 +1,166 @@
-{# AI Research Brief · Server-rendered Markdown & MathML #}
-<section id="analysis" class="card pad" style="margin-bottom:24px;padding:40px">
-  <div class="row" style="margin-bottom:6px;flex-wrap:wrap">
-    <p class="eyebrow" style="margin:0">AI research brief</p>
-    <span class="b lo">Interpretation · not evidence</span>
+{# AI Research Brief · Premium Financial Intelligence Report #}
+<section id="analysis" class="card pad" style="margin-bottom:24px;padding:36px">
+  <div class="row" style="justify-content:space-between;align-items:flex-start;margin-bottom:12px;flex-wrap:wrap;gap:12px">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <p class="eyebrow" style="margin:0">AI research brief</p>
+      {% if company and company.name %}
+        <span class="muted" style="font-size:12px;font-weight:600">· {{ company.name }}{% if company.symbol %} ({{ company.symbol }}){% endif %}</span>
+      {% endif %}
+      <span class="b lo" style="font-size:11px">Interpretation · not evidence</span>
+      {% if analysis_brief and analysis_brief.as_of %}
+        <span class="muted" style="font-size:11px">· Retrieved {{ analysis_brief.as_of }}</span>
+      {% endif %}
+    </div>
+
+    {% if analysis_brief and analysis_brief.market_sentiment %}
+      <div style="display:flex;align-items:center;gap:8px">
+        {% set s_lower = analysis_brief.market_sentiment | lower %}
+        {% if 'bull' in s_lower or 'pos' in s_lower %}
+          <span class="b" style="background:var(--upbg);color:var(--upt);border:1px solid rgba(26,156,60,0.25);font-size:12px;font-weight:600">▲ {{ analysis_brief.market_sentiment | capitalize }}</span>
+        {% elif 'bear' in s_lower or 'neg' in s_lower %}
+          <span class="b" style="background:var(--downbg);color:var(--downt);border:1px solid rgba(227,0,0,0.25);font-size:12px;font-weight:600">▼ {{ analysis_brief.market_sentiment | capitalize }}</span>
+        {% elif 'mix' in s_lower %}
+          <span class="b" style="background:var(--warnbg);color:var(--warn);border:1px solid rgba(178,80,0,0.25);font-size:12px;font-weight:600">◆ {{ analysis_brief.market_sentiment | capitalize }}</span>
+        {% else %}
+          <span class="b lo" style="border:1px solid var(--line);font-size:12px;font-weight:600">● {{ analysis_brief.market_sentiment | capitalize }}</span>
+        {% endif %}
+        {% if analysis_brief.confidence %}
+          <span class="b lo" style="font-size:11px;color:var(--muted)">{{ analysis_brief.confidence | capitalize }} confidence</span>
+        {% endif %}
+      </div>
+    {% endif %}
   </div>
+
   {% if analysis_brief and analysis_brief.has_analysis %}
     {% if analysis_brief.lead %}
-      <p style="font-size:30px;line-height:1.25;font-weight:600;letter-spacing:-0.025em;margin:12px 0 28px;max-width:860px">
+      <h2 style="font-size:24px;line-height:1.3;font-weight:600;letter-spacing:-0.02em;margin:8px 0 24px;max-width:860px;color:var(--text)">
         {{ analysis_brief.lead }}
-      </p>
+      </h2>
     {% endif %}
-    <div class="agent-markdown" style="font-size:15px;line-height:1.6">
-      {{ analysis_brief.rendered_html | safe }}
-    </div>
+
+    {% if analysis_brief.has_structured %}
+      <div class="brief-sections" style="display:flex;flex-direction:column;gap:24px">
+        {# 1. Executive Summary #}
+        {% if analysis_brief.executive_summary %}
+          <div class="brief-section brief-exec-summary" style="background:var(--fill);padding:20px 24px;border-radius:14px;border-left:4px solid var(--brand)">
+            <p class="eyebrow" style="color:var(--muted);margin-bottom:8px">Executive Summary</p>
+            <p style="font-size:15px;line-height:1.65;margin:0;color:var(--text);font-weight:450">
+              {{ analysis_brief.executive_summary }}
+            </p>
+          </div>
+        {% endif %}
+
+        {# 2. What Is Happening #}
+        {% if analysis_brief.what_is_happening %}
+          <div class="brief-section" style="padding:4px 0">
+            <h3 class="eyebrow" style="font-size:12px;letter-spacing:0.04em;margin-bottom:8px;color:var(--muted);text-transform:uppercase">What Is Happening</h3>
+            <p style="font-size:15px;line-height:1.65;margin:0;color:var(--text)">
+              {{ analysis_brief.what_is_happening }}
+            </p>
+          </div>
+        {% endif %}
+
+        {# 3. Bullish and Bearish Factors #}
+        {% if analysis_brief.bullish_factors or analysis_brief.bearish_factors %}
+          <div class="brief-factors-grid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:16px">
+            {% if analysis_brief.bullish_factors %}
+              <div class="brief-card-bullish" style="background:var(--upbg);border:1px solid rgba(48,209,88,0.22);border-radius:14px;padding:20px 22px">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+                  <span style="color:var(--upt);font-size:14px;font-weight:700">▲</span>
+                  <p class="eyebrow" style="color:var(--upt);margin:0;font-size:12px;font-weight:700">Bullish Factors</p>
+                </div>
+                <ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:8px">
+                  {% for item in analysis_brief.bullish_factors %}
+                    <li style="font-size:14px;line-height:1.55;color:var(--text)">{{ item }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+
+            {% if analysis_brief.bearish_factors %}
+              <div class="brief-card-bearish" style="background:var(--downbg);border:1px solid rgba(255,69,58,0.22);border-radius:14px;padding:20px 22px">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+                  <span style="color:var(--downt);font-size:14px;font-weight:700">▼</span>
+                  <p class="eyebrow" style="color:var(--downt);margin:0;font-size:12px;font-weight:700">Bearish Factors</p>
+                </div>
+                <ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:8px">
+                  {% for item in analysis_brief.bearish_factors %}
+                    <li style="font-size:14px;line-height:1.55;color:var(--text)">{{ item }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+          </div>
+        {% endif %}
+
+        {# 4. Key Risks #}
+        {% if analysis_brief.risks %}
+          <div class="brief-section" style="background:var(--fill);padding:18px 22px;border-radius:14px;border:1px solid var(--line)">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+              <span style="color:var(--warn);font-size:13px;font-weight:700">⚠</span>
+              <h3 class="eyebrow" style="color:var(--text);margin:0;font-size:12px;font-weight:600">Key Risks</h3>
+            </div>
+            <ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px">
+              {% for risk in analysis_brief.risks %}
+                <li style="font-size:14px;line-height:1.55;color:var(--text)">{{ risk }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+
+        {# 5. Catalysts & What to Watch #}
+        {% if analysis_brief.catalysts or analysis_brief.what_to_watch %}
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:16px">
+            {% if analysis_brief.catalysts %}
+              <div style="background:var(--fill);padding:18px 22px;border-radius:14px;border:1px solid var(--line)">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+                  <span style="color:var(--info);font-size:13px;font-weight:700">⚡</span>
+                  <h3 class="eyebrow" style="color:var(--text);margin:0;font-size:12px;font-weight:600">Upcoming Catalysts</h3>
+                </div>
+                <ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px">
+                  {% for cat in analysis_brief.catalysts %}
+                    <li style="font-size:14px;line-height:1.55;color:var(--text)">{{ cat }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+
+            {% if analysis_brief.what_to_watch %}
+              <div style="background:var(--fill);padding:18px 22px;border-radius:14px;border:1px solid var(--line)">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+                  <span style="color:var(--muted);font-size:13px;font-weight:700">◎</span>
+                  <h3 class="eyebrow" style="color:var(--text);margin:0;font-size:12px;font-weight:600">What to Watch</h3>
+                </div>
+                <ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px">
+                  {% for watch in analysis_brief.what_to_watch %}
+                    <li style="font-size:14px;line-height:1.55;color:var(--text)">{{ watch }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+          </div>
+        {% endif %}
+
+        {# 6. AI Verdict #}
+        {% if analysis_brief.ai_verdict %}
+          <div class="brief-verdict" style="border:1px solid var(--line);border-left:4px solid var(--link);background:var(--card);box-shadow:var(--shadow);border-radius:14px;padding:22px 24px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+              <span style="color:var(--link);font-size:14px;font-weight:700">✦</span>
+              <p class="eyebrow" style="color:var(--link);margin:0;font-size:12px;font-weight:700">AI Research Verdict</p>
+            </div>
+            <p style="font-size:15px;line-height:1.65;margin:0;color:var(--text);font-weight:500">
+              {{ analysis_brief.ai_verdict }}
+            </p>
+          </div>
+        {% endif %}
+      </div>
+    {% else %}
+      {# Backward compatibility fallback to sanitized rendered markdown #}
+      <div class="agent-markdown" style="font-size:15px;line-height:1.6">
+        {{ analysis_brief.rendered_html | safe }}
+      </div>
+    {% endif %}
+
   {% elif analysis_brief and analysis_brief.is_unavailable %}
     <div style="margin-top:16px;padding:16px;border-left:3px solid var(--muted);background:var(--fill);border-radius:6px">
       <b style="font-size:14px;color:var(--text);display:block;margin-bottom:4px">Interpretation notice</b>
