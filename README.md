@@ -1,7 +1,7 @@
 # QuantAI
 ### Financial Intelligence. Clear Evidence. Better Decisions.
 
-An Apple-inspired financial research platform powered by Python, FastAPI and Agno AgentOS.
+Anfinancial research platform powered by Python, FastAPI and Agno AgentOS.
 
 ## How It Works
 
