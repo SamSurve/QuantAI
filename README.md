@@ -79,7 +79,7 @@ flowchart TB
 | **Backend** | Python 3.12 · FastAPI · Pydantic · Agno AgentOS |
 | **Frontend** | Jinja2 · HTMX · Vanilla JS · Chart.js 4 · Tailwind CSS |
 | **AI** | Groq (primary + secondary) · OpenRouter (fallback) |
-| **Deploy** | Vercel Serverless (60s max duration) |
+| **Deploy** | Vercel Serverless · Python 3.12 |
 
 ---
 
