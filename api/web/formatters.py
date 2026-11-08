@@ -74,12 +74,64 @@ def _format_compact(val: float, max_fraction_digits: int = 2) -> str:
     return f"{sign}{formatted}{unit}"
 
 
+def format_indian_number(val: float | int, max_fraction_digits: int = 2) -> str:
+    """Format a positive number using the Indian grouping system (en-IN).
+
+    Group the lowest 3 digits together, then group preceding digits by pairs.
+    """
+    abs_val = abs(float(val))
+    parts = f"{abs_val:.{max_fraction_digits}f}".split(".")
+    int_part = parts[0]
+    dec_part = "." + parts[1] if len(parts) > 1 and max_fraction_digits > 0 else ""
+    if len(int_part) <= 3:
+        return int_part + dec_part
+    last3 = int_part[-3:]
+    remaining = int_part[:-3]
+    chunks: list[str] = []
+    while len(remaining) > 2:
+        chunks.append(remaining[-2:])
+        remaining = remaining[:-2]
+    if remaining:
+        chunks.append(remaining)
+    chunks.reverse()
+    return ",".join(chunks) + "," + last3 + dec_part
+
+
+def format_indian_compact(val: float | int, max_fraction_digits: int = 2) -> str:
+    """Format compact amounts using standard Indian financial units (Lakh Cr, Cr, L, K)."""
+    abs_val = abs(float(val))
+    if abs_val >= 1e12:
+        scaled = abs_val / 1e12
+        unit = " Lakh Cr"
+    elif abs_val >= 1e7:
+        scaled = abs_val / 1e7
+        unit = " Cr"
+    elif abs_val >= 1e5:
+        scaled = abs_val / 1e5
+        unit = " L"
+    elif abs_val >= 1e3:
+        scaled = abs_val / 1e3
+        unit = " K"
+    else:
+        scaled = abs_val
+        unit = ""
+
+    if unit:
+        formatted = f"{scaled:.{max_fraction_digits}f}"
+        return f"{formatted}{unit}"
+    return format_indian_number(scaled, max_fraction_digits)
+
+
 def money_label(
     value: float | int | None,
     currency: str | None = None,
     max_fraction_digits: int = 2,
 ) -> str:
-    """Format currency values with appropriate symbol and decimals."""
+    """Format currency values with appropriate symbol and decimals.
+
+    Uses en-IN locale grouping for INR, whole units for JPY, and clean safe fallback
+    when currency metadata is unavailable without inventing an ungrounded currency.
+    """
     if value is None:
         return "—"
     try:
@@ -89,19 +141,24 @@ def money_label(
     except (ValueError, TypeError):
         return "—"
 
-    curr_code = (currency or "USD").upper()
-    symbol = CURRENCY_SYMBOLS.get(curr_code, f"{curr_code} ")
-
-    if curr_code == "JPY":
-        # JPY typically has no fractional decimals
-        abs_int = abs(int(round(val)))
-        sign = "-" if val < 0 else ""
-        return f"{sign}{symbol}{abs_int:,}"
-
     sign = "-" if val < 0 else ""
     abs_val = abs(val)
+
+    if currency:
+        curr_code = currency.strip().upper()
+        symbol = CURRENCY_SYMBOLS.get(curr_code, f"{curr_code} ")
+        if curr_code == "INR":
+            formatted_num = format_indian_number(abs_val, max_fraction_digits)
+            return f"{sign}{symbol}{formatted_num}"
+        if curr_code == "JPY":
+            abs_int = abs(int(round(val)))
+            return f"{sign}{symbol}{abs_int:,}"
+        formatted_num = f"{abs_val:,.{max_fraction_digits}f}"
+        return f"{sign}{symbol}{formatted_num}"
+
+    # Missing currency metadata -> safe fallback without inventing a currency
     formatted_num = f"{abs_val:,.{max_fraction_digits}f}"
-    return f"{sign}{symbol}{formatted_num}"
+    return f"{sign}{formatted_num}"
 
 
 def compact_money_label(
@@ -109,7 +166,7 @@ def compact_money_label(
     currency: str | None = None,
     max_fraction_digits: int = 2,
 ) -> str:
-    """Format compact money strings like $3T or €500.5M."""
+    """Format compact money strings like $3T or ₹12.50 Cr."""
     if value is None:
         return "—"
     try:
@@ -119,12 +176,20 @@ def compact_money_label(
     except (ValueError, TypeError):
         return "—"
 
-    curr_code = (currency or "USD").upper()
-    symbol = CURRENCY_SYMBOLS.get(curr_code, f"{curr_code} ")
-
-    compact_str = _format_compact(abs(val), max_fraction_digits)
     sign = "-" if val < 0 else ""
-    return f"{sign}{symbol}{compact_str}"
+    abs_val = abs(val)
+
+    if currency:
+        curr_code = currency.strip().upper()
+        symbol = CURRENCY_SYMBOLS.get(curr_code, f"{curr_code} ")
+        if curr_code == "INR":
+            compact_str = format_indian_compact(abs_val, max_fraction_digits)
+            return f"{sign}{symbol}{compact_str}"
+        compact_str = _format_compact(abs_val, max_fraction_digits)
+        return f"{sign}{symbol}{compact_str}"
+
+    compact_str = _format_compact(abs_val, max_fraction_digits)
+    return f"{sign}{compact_str}"
 
 
 def percent_label(

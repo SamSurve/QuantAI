@@ -33,7 +33,13 @@
   <div class="pr" style="text-align:right">
     {% if market and market.current_price is not none %}
     <div class="price" style="font-size:56px;font-weight:700;letter-spacing:-0.03em;line-height:1">
-      ${{ "%.2f"|format(market.current_price) }}
+      {% if brief and brief.quote %}
+        {{ brief.quote }}
+      {% else %}
+        {% set dossier_curr = (company.currency if company and company.currency else (market.currency if market and market.currency else ("INR" if (company and company.exchange and company.exchange in ["NSI", "BSE", "NSE"]) or (company and company.symbol and (company.symbol.endswith(".NS") or company.symbol.endswith(".BO"))) else "USD"))) %}
+        {% set curr_sym = "₹" if dossier_curr == "INR" else ("£" if dossier_curr == "GBP" else ("€" if dossier_curr == "EUR" else ("¥" if dossier_curr == "JPY" else "$"))) %}
+        {{ curr_sym }}{{ "%.2f"|format(market.current_price) }}
+      {% endif %}
     </div>
     {% if market.daily_change is not none and market.daily_change_percent is not none %}
     {% set is_pos = market.daily_change > 0 %}

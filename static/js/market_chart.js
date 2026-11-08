@@ -21,6 +21,48 @@
 
   const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
+  let currentCurrency = null;
+
+  const CURRENCY_SYMBOLS = {
+    USD: '$',
+    EUR: '€',
+    GBP: '£',
+    INR: '₹',
+    JPY: '¥',
+    CAD: 'CA$',
+    AUD: 'A$',
+    CHF: 'CHF ',
+    CNY: '¥',
+  };
+
+  function formatChartPrice(value, currency, decimals) {
+    const num = Number(value);
+    if (!Number.isFinite(num)) return '—';
+    const dec = typeof decimals === 'number' ? decimals : 2;
+    const curr = currency ? String(currency).trim().toUpperCase() : null;
+    const symbol = curr ? (CURRENCY_SYMBOLS[curr] || curr + ' ') : '';
+    const sign = num < 0 ? '-' : '';
+    const absVal = Math.abs(num);
+
+    if (curr === 'INR') {
+      return sign + symbol + absVal.toLocaleString('en-IN', {
+        minimumFractionDigits: dec,
+        maximumFractionDigits: dec,
+      });
+    }
+
+    if (curr === 'JPY') {
+      return sign + symbol + Math.round(absVal).toLocaleString('en-US');
+    }
+
+    const formatted = absVal.toLocaleString('en-US', {
+      minimumFractionDigits: dec,
+      maximumFractionDigits: dec,
+    });
+    return sign + symbol + formatted;
+  }
+
+
   function formatChartDate(value) {
     const raw = String(value);
     const m = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
@@ -147,8 +189,8 @@
     const chgEl = document.getElementById('chartPeriodChange');
 
     if (perf) {
-      if (lowEl) lowEl.textContent = `$${perf.low.toFixed(2)}`;
-      if (highEl) highEl.textContent = `$${perf.high.toFixed(2)}`;
+      if (lowEl) lowEl.textContent = formatChartPrice(perf.low, currentCurrency, 2);
+      if (highEl) highEl.textContent = formatChartPrice(perf.high, currentCurrency, 2);
       if (chgEl) {
         const isPos = perf.change >= 0;
         chgEl.textContent = `${isPos ? '+' : ''}${perf.change.toFixed(2)}%`;
@@ -235,7 +277,7 @@
               },
               label: function (item) {
                 const val = Number(item.raw);
-                return `$${val.toFixed(2)}`;
+                return formatChartPrice(val, currentCurrency, 2);
               },
             },
           },
@@ -258,7 +300,7 @@
             ticks: {
               color: colors.tick,
               callback: function (val) {
-                return `$${Number(val).toFixed(0)}`;
+                return formatChartPrice(val, currentCurrency, 0);
               },
             },
           },
@@ -275,6 +317,7 @@
       const rawText = dataEl.textContent.trim();
       if (rawText && rawText !== '{}') {
         chartData = JSON.parse(rawText);
+        currentCurrency = chartData.currency || null;
       }
     } catch (e) {
       console.warn('Failed to parse chart-data JSON payload', e);

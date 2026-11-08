@@ -26,6 +26,11 @@ from api.web.research import classify_research_error, orchestrate_dual_research
 
 TEMPLATES_DIR = Path(__file__).resolve().parents[2] / "templates"
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
+from api.web.formatters import money_label, compact_money_label, number_label, percent_label
+templates.env.filters["money"] = money_label
+templates.env.filters["compact_money"] = compact_money_label
+templates.env.filters["number"] = number_label
+templates.env.filters["percent"] = percent_label
 
 router = APIRouter()
 
@@ -150,10 +155,16 @@ def register_web_routes(
                         warnings=result.warnings if result else [],
                     )
 
+                    resolved_chart_currency = (
+                        brief.priceHistory.currency
+                        or (result.company.currency if result.company else None)
+                        or (result.market.currency if result.market else None)
+                    )
                     chart_payload = {
                         "intraday": [p.model_dump() for p in brief.priceHistory.intraday],
                         "daily": [p.model_dump() for p in brief.priceHistory.daily],
                         "defaultPeriod": brief.priceHistory.defaultPeriod,
+                        "currency": resolved_chart_currency,
                     }
                     return templates.TemplateResponse(
                         request=request,

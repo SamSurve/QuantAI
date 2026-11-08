@@ -282,7 +282,13 @@ def market_brief_from_research(research: TypedResearchResponse) -> MarketBrief:
         or (research.company.currency if research.company else None)
     )
 
-    currency = research.company.currency if research.company else None
+    currency = (
+        (research.company.currency if research.company else None)
+        or (market.currency if market else None)
+        or (research.market.currency if research.market else None)
+        or (deep.market_context.currency if deep and deep.market_context else None)
+        or (deep.company_overview.currency if deep and deep.company_overview else None)
+    )
     price_history = intelligence.price_history if intelligence else None
 
     raw_daily = price_history.daily if price_history else research.history
@@ -527,6 +533,7 @@ def market_brief_from_research(research: TypedResearchResponse) -> MarketBrief:
             daily=daily_points,
             availablePeriods=avail_periods,
             defaultPeriod=def_period,
+            currency=currency,
         ),
         analysis=typed_analysis_markdown(research),
         aiInterpretationNotice=ai_notice,

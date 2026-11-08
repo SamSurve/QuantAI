@@ -87,6 +87,7 @@ class MarketBriefPriceHistory(BaseModel):
     daily: list[ChartPoint] = Field(default_factory=list)
     availablePeriods: list[HistoryPeriod] = Field(default_factory=list)
     defaultPeriod: HistoryPeriod = "1M"
+    currency: str | None = None
 
 
 class MarketBriefSignal(BaseModel):

@@ -27,7 +27,7 @@ def format_financial_health(fh: FinancialHealth | None) -> dict[str, Any]:
             "currency": None,
         }
 
-    currency = fh.currency or "USD"
+    currency = fh.currency if fh else None
 
     primary = [
         {
